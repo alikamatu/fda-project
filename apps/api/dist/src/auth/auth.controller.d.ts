@@ -5,47 +5,13 @@ import { LoginDto } from './dto/login.dto';
 export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
-    registerUser(dto: RegisterUserDto): Promise<{
-        id: string;
-        email: string;
-        fullName: string;
-        role: import(".prisma/client").$Enums.UserRole;
-        isActive: boolean;
-        createdAt: Date;
-    }>;
-    registerManufacturer(dto: RegisterManufacturerDto): Promise<{
-        user: {
-            id: string;
-            email: string;
-            fullName: string;
-            role: import(".prisma/client").$Enums.UserRole;
-            isActive: boolean;
-        };
-        manufacturer: {
-            companyName: string;
-            registrationNumber: string;
-            isApproved: boolean;
-        };
-    }>;
-    login(dto: LoginDto): Promise<{
-        accessToken: string;
-        user: {
-            id: string;
-            email: string;
-            fullName: string;
-            role: import(".prisma/client").$Enums.UserRole;
-        };
-    }>;
+    registerUser(dto: RegisterUserDto): unknown;
+    registerManufacturer(dto: RegisterManufacturerDto): unknown;
+    login(dto: LoginDto): unknown;
 }
 export declare class AdminController {
     private authService;
     constructor(authService: AuthService);
-    activateUser(userId: string): Promise<{
-        message: string;
-        userId: string;
-    }>;
-    deactivateUser(userId: string): Promise<{
-        message: string;
-        userId: string;
-    }>;
+    activateUser(userId: string): unknown;
+    deactivateUser(userId: string): unknown;
 }

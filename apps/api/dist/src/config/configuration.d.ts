@@ -4,7 +4,7 @@ declare const _default: () => {
         expiresIn: string;
     };
     bcrypt: {
-        saltRounds: number;
+        saltRounds: any;
     };
 };
 export default _default;
