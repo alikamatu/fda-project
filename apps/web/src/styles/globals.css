@@ -1,0 +1,290 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+}
+
+/* Prevent layout shift */
+img {
+  content-visibility: auto;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .motion-component {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility to use Montserrat for headings */
+.font-montserrat {
+  font-family: var(--font-montserrat) !important;
+}
+
+/* Trust section specific enhancements */
+.bg-gray-50\/30 {
+  background-color: rgba(249, 250, 251, 0.3);
+}
+
+/* Better border transitions for cards */
+.border-gray-100 {
+  border-color: rgba(243, 244, 246, 1);
+  transition: border-color 0.2s ease;
+}
+
+/* Hover effect for trust cards */
+.hover\:bg-gray-50\/30:hover {
+  background-color: rgba(249, 250, 251, 0.3);
+}
+
+/* Status indicator animation */
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+/* Print optimization for compliance documentation */
+@media print {
+  .trust-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  
+  .compliance-footer {
+    border-top: 1px solid #000;
+  }
+}
+
+/* Ensure compliance indicators are clear for color-blind users */
+@media (prefers-color-scheme: dark) {
+  .bg-green-500 {
+    filter: brightness(0.9);
+  }
+}
+
+/* CTA Section Specific Styles */
+.bg-gradient-to-b {
+  background-size: 100% 100%;
+  background-attachment: scroll;
+}
+
+/* Enhanced gradient for CTA */
+.bg-gradient-to-b.from-white.to-gray-50\/50 {
+  background-image: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    #f8fafc 50%,
+    #f1f5f9 100%
+  );
+}
+
+/* Subtle shadow for primary button */
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Hover states for CTA buttons */
+.bg-blue-900:hover {
+  background-color: #1e40af; /* Slightly lighter blue for hover */
+}
+
+/* Focus state for CTA */
+.rounded-3xl:focus-within {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Print styles for CTA */
+@media print {
+  .bg-gradient-to-b {
+    background: white !important;
+    border: 1px solid #e5e7eb !important;
+  }
+  
+  .shadow-sm {
+    box-shadow: none !important;
+  }
+}
+
+/* Reduced motion optimization */
+@media (prefers-reduced-motion: reduce) {
+  .transition-colors {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Ensure CTA is accessible for keyboard navigation */
+.rounded-md:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Footer specific styles */
+footer {
+  background-color: #f9fafb; /* gray-50 */
+}
+
+/* Focus states for footer links */
+footer a:focus-visible {
+  outline: 2px solid #1d4ed8;
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
+/* Print styles for footer */
+@media print {
+  footer {
+    border-top: 1px solid #000;
+    background: white !important;
+  }
+  
+  footer a {
+    color: #000 !important;
+    text-decoration: underline;
+  }
+  
+  .text-gray-600 {
+    color: #4b5563 !important;
+  }
+}
+
+/* Reduced motion for footer */
+@media (prefers-reduced-motion: reduce) {
+  footer a {
+    transition: none !important;
+  }
+}
+
+/* Ensure footer stays at bottom on short pages */
+.min-h-screen.flex.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+main.flex-grow {
+  flex-grow: 1;
+}
+
+/* 404 Page Specific Styles */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Print styles for error pages */
+@media print {
+  .bg-gray-50\/30 {
+    background: white !important;
+  }
+  
+  .rounded-2xl {
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+  }
+  
+  button, a {
+    display: none !important;
+  }
+}
+
+/* Reduced motion alternatives */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-pulse {
+    animation: none;
+  }
+  
+  [class*="motion"] {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Ensure error pages are accessible */
+[role="alert"] {
+  color: #b91c1c;
+  font-weight: 500;
+}
+
+/* Focus states for error page buttons */
+button:focus-visible {
+  outline: 2px solid #1d4ed8;
+  outline-offset: 2px;
+}
+
+/* Ensure proper contrast for error text */
+.text-red-600 {
+  color: #dc2626;
+}
+
+.bg-red-50 {
+  background-color: #fef2f2;
+}
+
+.border-red-100 {
+  border-color: #fee2e2;
+}
