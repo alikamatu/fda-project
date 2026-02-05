@@ -58,7 +58,7 @@ export function Hero({
       className="min-h-screen flex items-center justify-center bg-white py-12 px-4 sm:px-6 lg:px-8"
     >
       <Container className="w-full">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           {/* Hero Card Container */}
             {/* Image Reveal Component */}
             <HeroImageReveal

@@ -41,7 +41,7 @@ export function CTA({
   return (
     <section className="py-12 px-4 sm:px-6 lg:px-8">
       <Container>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Minimal Rounded Container */}
           <div 
             ref={ref}

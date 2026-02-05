@@ -63,7 +63,7 @@ export function Features({
   return (
     <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
       <Container>
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           {/* Rounded Container (matches Hero and HowItWorks) */}
           <div className="bg-gray-50/50 overflow-hiddenmd:p-12 lg:p-16">
             {/* Section Title */}
