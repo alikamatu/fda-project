@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { RegisterManufacturerDto } from './dto/register-manufacturer.dto';
@@ -25,6 +25,17 @@ export class AuthController {
   @Post('login')
   async login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getCurrentUser(@Request() req: { user: { id?: string } }) {
+    // JwtStrategy returns `id` on the validated user payload.
+    const userId = req.user?.id;
+    if (!userId) {
+      throw new Error('User ID is required');
+    }
+    return this.authService.validateUser(userId);
   }
 }
 

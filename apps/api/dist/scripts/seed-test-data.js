@@ -2,7 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const bcrypt = require("bcrypt");
-const prisma = new client_1.PrismaClient();
+const adapter_pg_1 = require("@prisma/adapter-pg");
+const pg_1 = require("pg");
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+    throw new Error('DATABASE_URL environment variable is not set');
+}
+const pool = new pg_1.Pool({ connectionString });
+const prisma = new client_1.PrismaClient({ adapter: new adapter_pg_1.PrismaPg(pool) });
 async function main() {
     console.log('Seeding test data...');
     const adminPassword = await bcrypt.hash('admin123', 10);

@@ -1,4 +1,4 @@
-import { Hero, HowItWorks, Features, Trust, CTA, Navbar, TRUST_ITEMS } from '@/features/landing';
+import { Hero, HowItWorks, Features, Trust, CTA, Navbar, Footer, TRUST_ITEMS } from '@/features/landing';
 import { HERO_DATA, HOW_IT_WORKS_DATA, CTA_DATA, FEATURE_GROUPS } from '@/features/landing';
 
 export default function LandingPage() {
@@ -22,6 +22,7 @@ export default function LandingPage() {
         items={TRUST_ITEMS}
       />
       <CTA {...CTA_DATA} />
+      <Footer />
     </main>
   );
 }

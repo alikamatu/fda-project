@@ -1,7 +1,8 @@
-import { Geist, Geist_Mono, Montserrat } from "next/font/google"; // Keep font imports
-import "@/styles/globals.css"; // Correct path to globals.css
-import { siteMetadata } from "@/app/metadata"; // Correct path to metadata
-import { Footer } from "@/features/landing";
+import { Geist, Geist_Mono, Montserrat } from "next/font/google";
+import "@/styles/globals.css";
+import { siteMetadata } from "@/app/metadata";
+import { QueryProvider } from "@/providers/QueryProvider";
+import { AuthProvider } from "@/providers/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,8 +32,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} antialiased`}
       >
-        {children}
-        <Footer />
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

@@ -20,6 +20,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any) {
     try {
+      console.log('[JwtStrategy] Validating JWT payload:', { sub: payload.sub, email: payload.email, role: payload.role });
+      
+      if (!payload.sub) {
+        console.error('[JwtStrategy] JWT payload missing sub (user ID)');
+        throw new Error('JWT payload missing sub (user ID)');
+      }
+
       const user = await this.prisma.user.findUnique({
         where: { id: payload.sub },
         select: {
@@ -30,17 +37,28 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         },
       });
 
-      if (!user || !user.isActive) {
-        return null; // Return null instead of throwing for optional auth
+      if (!user) {
+        console.error('[JwtStrategy] User not found for ID:', payload.sub);
+        throw new Error('User not found');
       }
 
+      if (!user.isActive) {
+        console.error('[JwtStrategy] User account is inactive:', user.email);
+        throw new Error('User account is inactive');
+      }
+
+      console.log('[JwtStrategy] JWT validation successful:', { userId: user.id, email: user.email, role: user.role });
+
       return {
+        userId: user.id,
         id: user.id,
         email: user.email,
         role: user.role,
       };
     } catch (error) {
-      return null; // Return null on error for optional auth
+      console.error('[JwtStrategy] Validation error:', error.message);
+      // Throw to let Passport handle the error properly
+      throw error;
     }
   }
 }

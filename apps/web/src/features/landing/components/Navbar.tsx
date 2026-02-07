@@ -19,7 +19,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'How It Works', href: '/how-it-works' },
   { label: 'Features', href: '/features' },
   { label: 'Trust & Compliance', href: '/trust' },
-  { label: 'Register', href: '/register', primary: true },
+  { label: 'Register', href: '/auth/register', primary: true },
 ];
 
 export function Navbar() {

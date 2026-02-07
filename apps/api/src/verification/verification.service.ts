@@ -344,4 +344,244 @@ export class VerificationService {
       },
     });
   }
+
+  /**
+   * Get paginated verifications for admin dashboard with filtering
+   */
+  async getVerificationsForAdmin(filters: {
+    status?: string;
+    search?: string;
+    startDate?: string;
+    endDate?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const page = Math.max(1, filters.page || 1);
+    const limit = Math.min(Math.max(1, filters.limit || 20), 100);
+    const skip = (page - 1) * limit;
+
+    // Build where conditions
+    const where: any = {};
+
+    if (filters.status) {
+      where.status = filters.status;
+    }
+
+    if (filters.startDate) {
+      where.verifiedAt = { gte: new Date(filters.startDate) };
+    }
+
+    if (filters.endDate) {
+      if (where.verifiedAt) {
+        where.verifiedAt.lte = new Date(filters.endDate);
+      } else {
+        where.verifiedAt = { lte: new Date(filters.endDate) };
+      }
+    }
+
+    if (filters.search) {
+      where.OR = [
+        { verificationCode: { code: { contains: filters.search, mode: 'insensitive' } } },
+        { verificationCode: { productBatch: { batchNumber: { contains: filters.search, mode: 'insensitive' } } } },
+        { verificationCode: { productBatch: { product: { productName: { contains: filters.search, mode: 'insensitive' } } } } },
+        { verificationCode: { productBatch: { product: { manufacturer: { companyName: { contains: filters.search, mode: 'insensitive' } } } } } },
+      ];
+    }
+
+    // Fetch with full relations
+    const [data, total] = await Promise.all([
+      this.prisma.verificationLog.findMany({
+        where,
+        include: {
+          verificationCode: {
+            include: {
+              productBatch: {
+                include: {
+                  product: {
+                    include: {
+                      manufacturer: {
+                        select: {
+                          id: true,
+                          companyName: true,
+                          registrationNumber: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          user: {
+            select: {
+              id: true,
+              email: true,
+              role: true,
+            },
+          },
+        },
+        orderBy: {
+          verifiedAt: 'desc',
+        },
+        skip,
+        take: limit,
+      }),
+      this.prisma.verificationLog.count({ where }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  /**
+   * Get detailed information about a specific verification
+   */
+  async getVerificationDetailsForAdmin(verificationId: string) {
+    const verification = await this.prisma.verificationLog.findUnique({
+      where: { id: verificationId },
+      include: {
+        verificationCode: {
+          include: {
+            productBatch: {
+              include: {
+                product: {
+                  include: {
+                    manufacturer: {
+                      select: {
+                        id: true,
+                        companyName: true,
+                        registrationNumber: true,
+                        contactEmail: true,
+                        address: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            email: true,
+            fullName: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    if (!verification) {
+      throw new BadRequestException('Verification not found');
+    }
+
+    return verification;
+  }
+
+  /**
+   * Export verifications as CSV
+   */
+  async exportVerificationsAsCsv(filters: {
+    status?: string;
+    search?: string;
+    startDate?: string;
+    endDate?: string;
+  }): Promise<string> {
+    const where: any = {};
+
+    if (filters.status) {
+      where.status = filters.status;
+    }
+
+    if (filters.startDate) {
+      where.verifiedAt = { gte: new Date(filters.startDate) };
+    }
+
+    if (filters.endDate) {
+      if (where.verifiedAt) {
+        where.verifiedAt.lte = new Date(filters.endDate);
+      } else {
+        where.verifiedAt = { lte: new Date(filters.endDate) };
+      }
+    }
+
+    const verifications = await this.prisma.verificationLog.findMany({
+      where,
+      include: {
+        verificationCode: {
+          include: {
+            productBatch: {
+              include: {
+                product: {
+                  include: {
+                    manufacturer: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        user: true,
+      },
+      orderBy: {
+        verifiedAt: 'desc',
+      },
+    });
+
+    // Build CSV headers
+    const headers = [
+      'Verification ID',
+      'Status',
+      'Verification Code',
+      'Product Name',
+      'Product Code',
+      'Category',
+      'Manufacturer',
+      'Batch Number',
+      'Manufacture Date',
+      'Expiry Date',
+      'Verified At',
+      'Location',
+      'IP Address',
+      'User Email',
+      'User Role',
+    ];
+
+    // Build CSV rows
+    const rows = verifications.map((v) => [
+      v.id,
+      v.status,
+      v.verificationCode?.code || '—',
+      v.verificationCode?.productBatch?.product?.productName || '—',
+      v.verificationCode?.productBatch?.product?.productCode || '—',
+      v.verificationCode?.productBatch?.product?.category || '—',
+      v.verificationCode?.productBatch?.product?.manufacturer?.companyName || '—',
+      v.verificationCode?.productBatch?.batchNumber || '—',
+      v.verificationCode?.productBatch?.manufactureDate
+        ? new Date(v.verificationCode.productBatch.manufactureDate).toISOString().split('T')[0]
+        : '—',
+      v.verificationCode?.productBatch?.expiryDate
+        ? new Date(v.verificationCode.productBatch.expiryDate).toISOString().split('T')[0]
+        : '—',
+      new Date(v.verifiedAt).toISOString(),
+      v.location || '—',
+      v.ipAddress || '—',
+      v.user?.email || 'Anonymous',
+      v.user?.role || '—',
+    ]);
+
+    // Format CSV
+    const csvContent = [
+      headers.map((h) => `"${h}"`).join(','),
+      ...rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
+    ].join('\n');
+
+    return csvContent;
+  }
 }

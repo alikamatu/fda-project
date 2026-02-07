@@ -36,7 +36,7 @@ html {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  
+
   .motion-component {
     animation: none !important;
     transition: none !important;
@@ -46,7 +46,11 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-family:
+    var(--font-sans),
+    system-ui,
+    -apple-system,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -74,7 +78,8 @@ body {
 
 /* Status indicator animation */
 @keyframes pulse-subtle {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -92,7 +97,7 @@ body {
     break-inside: avoid;
     page-break-inside: avoid;
   }
-  
+
   .compliance-footer {
     border-top: 1px solid #000;
   }
@@ -143,7 +148,7 @@ body {
     background: white !important;
     border: 1px solid #e5e7eb !important;
   }
-  
+
   .shadow-sm {
     box-shadow: none !important;
   }
@@ -180,12 +185,12 @@ footer a:focus-visible {
     border-top: 1px solid #000;
     background: white !important;
   }
-  
+
   footer a {
     color: #000 !important;
     text-decoration: underline;
   }
-  
+
   .text-gray-600 {
     color: #4b5563 !important;
   }
@@ -210,7 +215,8 @@ main.flex-grow {
 
 /* 404 Page Specific Styles */
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -223,7 +229,8 @@ main.flex-grow {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -240,13 +247,14 @@ main.flex-grow {
   .bg-gray-50\/30 {
     background: white !important;
   }
-  
+
   .rounded-2xl {
     border: 1px solid #e5e7eb !important;
     box-shadow: none !important;
   }
-  
-  button, a {
+
+  button,
+  a {
     display: none !important;
   }
 }
@@ -257,7 +265,7 @@ main.flex-grow {
   .animate-pulse {
     animation: none;
   }
-  
+
   [class*="motion"] {
     animation: none !important;
     transition: none !important;
@@ -287,4 +295,149 @@ button:focus-visible {
 
 .border-red-100 {
   border-color: #fee2e2;
+}
+
+/* Add form-specific styles */
+@layer components {
+  .form-enter {
+    animation: formEnter 0.4s ease-out;
+  }
+
+  @keyframes formEnter {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Focus styles for form elements */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Password strength indicator */
+.password-strength {
+  height: 4px;
+  transition: all 0.3s ease;
+}
+
+/* Print styles for forms */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Reduced motion for form animations */
+@media (prefers-reduced-motion: reduce) {
+  .form-enter,
+  [class*="motion"] {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Ensure form fields are accessible */
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="text"],
+select,
+textarea {
+  font-size: 16px; /* Prevent zoom on mobile */
+}
+
+/* Custom focus styles */
+.focus-ring:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+}
+
+/* Error state animations */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+/* Manufacturer Drawer Styles */
+.drawer-enter {
+  transform: translateX(100%);
+}
+
+.drawer-enter-active {
+  transform: translateX(0);
+  transition: transform 200ms ease-out;
+}
+
+.drawer-exit {
+  transform: translateX(0);
+}
+
+.drawer-exit-active {
+  transform: translateX(100%);
+  transition: transform 200ms ease-in;
+}
+
+/* Focus management for accessibility */
+.drawer:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Scrollbar styling for drawer content */
+.drawer-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.drawer-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.drawer-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.drawer-content::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Modal backdrop blur effect */
+.backdrop-blur {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Print styles for manufacturer details */
+@media print {
+  .drawer {
+    position: relative !important;
+    width: 100% !important;
+    max-width: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  
+  .backdrop {
+    display: none !important;
+  }
 }

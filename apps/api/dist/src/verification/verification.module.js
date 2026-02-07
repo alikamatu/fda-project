@@ -10,6 +10,7 @@ exports.VerificationModule = void 0;
 const common_1 = require("@nestjs/common");
 const verification_service_1 = require("./verification.service");
 const verification_controller_1 = require("./verification.controller");
+const admin_verifications_controller_1 = require("./admin-verifications.controller");
 const throttler_1 = require("@nestjs/throttler");
 const rate_limit_config_1 = require("../config/rate-limit.config");
 let VerificationModule = class VerificationModule {
@@ -20,7 +21,7 @@ exports.VerificationModule = VerificationModule = __decorate([
         imports: [
             throttler_1.ThrottlerModule.forRoot(rate_limit_config_1.rateLimitConfig),
         ],
-        controllers: [verification_controller_1.VerificationController],
+        controllers: [verification_controller_1.VerificationController, admin_verifications_controller_1.AdminVerificationsController],
         providers: [verification_service_1.VerificationService],
         exports: [verification_service_1.VerificationService],
     })

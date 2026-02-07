@@ -24,16 +24,28 @@ let RolesGuard = class RolesGuard {
             context.getClass(),
         ]);
         if (!requiredRoles) {
+            console.log('[RolesGuard] No roles required for this endpoint');
             return true;
         }
         const { user } = context.switchToHttp().getRequest();
+        console.log('[RolesGuard] Checking roles:', {
+            requiredRoles,
+            userRole: user?.role,
+            userEmail: user?.email
+        });
         if (!user) {
+            console.error('[RolesGuard] No user found in request');
             throw new common_1.ForbiddenException('No authentication provided');
         }
         const hasRole = requiredRoles.includes(user.role);
         if (!hasRole) {
+            console.error('[RolesGuard] User lacks required role:', {
+                userRole: user.role,
+                requiredRoles
+            });
             throw new common_1.ForbiddenException(`Required roles: ${requiredRoles.join(', ')}`);
         }
+        console.log('[RolesGuard] Role validation successful');
         return true;
     }
 };
