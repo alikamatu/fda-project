@@ -65,8 +65,8 @@ export function BatchForm({ productId, onSuccess }: BatchFormProps) {
 
       onSuccess?.();
       router.push(`/manufacturer/products/${productId}`);
-    } catch (err: any) {
-      setError(err.message || 'Failed to create batch');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to create batch');
     }
   };
 

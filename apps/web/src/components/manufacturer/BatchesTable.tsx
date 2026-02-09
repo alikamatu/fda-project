@@ -2,7 +2,7 @@
 
 import { BatchResponse } from '@/services/batches.service';
 import { formatDate } from '@/lib/constants';
-import { Badge } from '@/components/ui/Badge';
+import { Badge, BadgeProps } from '@/components/ui/Badge';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
@@ -21,7 +21,6 @@ export function BatchesTable({
   batches,
   isLoading,
   productId,
-  productName,
   onBatchSelect,
   showProductName,
   userRole = 'MANUFACTURER',
@@ -44,7 +43,7 @@ export function BatchesTable({
     );
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): BadgeProps['variant'] => {
     switch (status) {
       case 'APPROVED':
         return 'success';
@@ -53,7 +52,7 @@ export function BatchesTable({
       case 'PENDING':
         return 'warning';
       default:
-        return 'default';
+        return 'neutral';
     }
   };
 

@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
 import { fadeInVariants } from './animations';
 
 interface HowItWorksStepProps {

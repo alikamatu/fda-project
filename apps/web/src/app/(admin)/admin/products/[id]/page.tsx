@@ -32,7 +32,7 @@ export default function ProductReviewPage() {
   });
 
   const rejectMutation = useMutation({
-    mutationFn: AdminProductsService.rejectProduct,
+    mutationFn: (id: string) => AdminProductsService.rejectProduct(id),
     onSuccess: () => {
       toast.success('Product rejected');
       queryClient.invalidateQueries({ queryKey: ['admin-product', productId] });

@@ -84,3 +84,12 @@ export interface PaginationMeta {
   total: number;
   totalPages: number;
 }
+
+export interface GetVerificationsParams {
+  status?: VerificationStatus;
+  search?: string;
+  startDate?: string;
+  endDate?: string;
+  page?: number;
+  limit?: number;
+}

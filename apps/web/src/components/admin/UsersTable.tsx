@@ -58,7 +58,7 @@ export function UsersTable({ data, onViewUser, isLoading }: UsersTableProps) {
     columnHelper.accessor('isActive', {
       header: 'Account Status',
       cell: (info) => (
-        <Badge variant={info.getValue() ? 'success' : 'secondary'} size="sm">
+        <Badge variant={info.getValue() ? 'success' : 'error'} size="sm">
           {info.getValue() ? 'Active' : 'Inactive'}
         </Badge>
       ),

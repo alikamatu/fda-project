@@ -21,13 +21,13 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             {required && <span className="text-red-500 ml-0.5">*</span>}
           </label>
         )}
-        <div className="relative">
+        <motion.div className="relative" whileHover={{ y: 0 }}>
           {icon && (
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
               {icon}
             </div>
           )}
-          <motion.select
+          <select
             ref={ref}
             className={`
               w-full py-2 text-sm bg-white border rounded-md appearance-none
@@ -41,9 +41,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               transition-colors
               ${className}
             `}
-            whileFocus={{ scale: 1.005 }}
-            transition={{ duration: 0.1 }}
-            {...(props as any)}
+            {...props}
           >
             <option value="">Select an option</option>
             {options.map((option) => (
@@ -51,13 +49,13 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                 {option.label}
               </option>
             ))}
-          </motion.select>
+          </select>
           <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
             </svg>
           </div>
-        </div>
+        </motion.div>
         {error && (
           <motion.p
             initial={{ opacity: 0, y: -5 }}

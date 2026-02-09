@@ -75,7 +75,7 @@ export function UserDrawer({
             <div>
               <dt className="text-xs font-medium text-gray-500">Account Status</dt>
               <dd className="mt-1">
-                <Badge variant={user.isActive ? 'success' : 'secondary'}>
+                <Badge variant={user.isActive ? 'success' : 'error'}>
                   {user.isActive ? 'Active' : 'Inactive'}
                 </Badge>
               </dd>

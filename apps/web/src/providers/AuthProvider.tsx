@@ -2,11 +2,9 @@
 
 import { useEffect } from 'react';
 import { apiClient } from '@/lib/api-client';
-import { useLogout } from '@/hooks/useAuth';
 import { tokenService } from '@/services/token.service';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { mutate: logout } = useLogout();
 
   useEffect(() => {
     // Register global 401/403 handler

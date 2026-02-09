@@ -49,7 +49,7 @@ export function ApprovalActions({
     }
   };
 
-  const handleReject = async (reason: string, internalNote?: string) => {
+  const handleReject = async (reason: string) => {
     try {
       await onReject(manufacturerId, reason);
       setShowRejectModal(false);

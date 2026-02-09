@@ -1,11 +1,6 @@
 'use client';
 
-import { PageContainer } from '@/components/layout/PageContainer';
-import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Card } from '@/components/ui/Card';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
 import { Product } from '@/services/products.service';
 
 interface ProductDetailsHeaderProps {

@@ -61,7 +61,7 @@ export function Features({
   const SectionIcon = ICONS[icon] || ShieldCheckIcon;
 
   return (
-    <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
+    <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white" id="features">
       <Container>
         <div className="max-w-7xl mx-auto">
           {/* Rounded Container (matches Hero and HowItWorks) */}

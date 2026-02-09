@@ -1,4 +1,5 @@
 import { apiClient } from '@/lib/api-client';
+import { VerificationStatus } from '@/types/verification';
 
 export interface DashboardStats {
   isApproved: boolean;
@@ -55,7 +56,7 @@ export interface VerificationLog {
 export interface GetVerificationsParams {
   page?: number;
   limit?: number;
-  status?: string;
+  status?: VerificationStatus;
   productId?: string;
   startDate?: string;
   endDate?: string;
@@ -86,7 +87,7 @@ export const ManufacturerService = {
     const query = new URLSearchParams();
     if (params.page) query.append('page', params.page.toString());
     if (params.limit) query.append('limit', params.limit.toString());
-    if (params.status) query.append('status', params.status);
+    if (params.status) query.append('status', String(params.status));
     if (params.productId) query.append('productId', params.productId);
     if (params.startDate) query.append('startDate', params.startDate);
     if (params.endDate) query.append('endDate', params.endDate);

@@ -1,8 +1,7 @@
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { RecentProduct } from '@/services/manufacturer.service';
-import { Product, ApprovalStatus } from '@/services/products.service';
+import { ApprovalStatus } from '@/services/products.service';
 import Link from 'next/link';
 
 interface ProductRow {

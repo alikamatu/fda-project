@@ -58,7 +58,7 @@ export function AccountInfoForm({ settings }: AccountInfoFormProps) {
       case 'MANUFACTURER':
         return 'warning';
       default:
-        return 'default';
+        return 'neutral';
     }
   };
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useForm, FormProvider } from 'react-hook-form';
+import { useForm, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from '@/components/ui/Input';
@@ -49,9 +49,13 @@ export function RegisterForm() {
     },
   });
 
-  const { register, handleSubmit, watch, formState: { errors } } = methods;
+  const { register, handleSubmit, control, formState: { errors } } = methods;
   
-  const selectedRole = watch('role');
+  const selectedRole = useWatch({
+    control,
+    name: 'role',
+    defaultValue: UserRole.CONSUMER,
+  });
 
   useEffect(() => {
     setIsManufacturer(selectedRole === UserRole.MANUFACTURER);

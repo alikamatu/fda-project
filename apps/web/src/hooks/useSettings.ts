@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ProfileService } from '@/services/profile.service';
 import { UpdateProfileInput, PasswordChangeInput } from '@/types/settings';
 import { useAuthStore } from '@/stores/auth.store';
+import { UserRole } from '@/types/auth';
 
 const PROFILE_QUERY_KEY = ['profile', 'settings'] as const;
 
@@ -37,7 +38,7 @@ export function useUpdateProfile() {
         id: updatedUser.id,
         email: updatedUser.email,
         fullName: updatedUser.fullName,
-        role: updatedUser.role as 'ADMIN' | 'CONSUMER' | 'MANUFACTURER',
+        role: updatedUser.role as UserRole,
         isActive: updatedUser.isActive,
       });
     },

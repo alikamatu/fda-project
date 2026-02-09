@@ -14,28 +14,8 @@ import {
   ClockIcon,
   DocumentCheckIcon,
   EnvelopeIcon,
-  MapPinIcon,
 } from '@heroicons/react/24/outline';
 
-interface ManufacturerProfile {
-  id: string;
-  companyName: string;
-  registrationNumber: string;
-  contactEmail: string;
-  contactPhone?: string;
-  address: string;
-  isApproved: boolean;
-  createdAt: string;
-  updatedAt: string;
-  user: {
-    id: string;
-    fullName: string;
-    email: string;
-    phone?: string;
-    isActive: boolean;
-    createdAt: string;
-  };
-}
 
 /**
  * Manufacturer Pending Page
@@ -44,10 +24,7 @@ interface ManufacturerProfile {
 export default function ManufacturerPendingPage() {
   const router = useRouter();
   const { data: currentUser, isLoading: userLoading } = useCurrentUser();
-  const [manufacturer, setManufacturer] = useState<ManufacturerProfile | null>(null);
-  const [stats, setStats] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   // Fetch manufacturer profile and check approval status
   useEffect(() => {
@@ -58,10 +35,9 @@ export default function ManufacturerPendingPage() {
 
           // Try to fetch dashboard stats to check approval status
           const statsData = await ManufacturerService.getDashboardStats();
-          setStats(statsData);
 
           // If approved, redirect to dashboard
-          if (statsData?.isApproved) {
+          if ((statsData as { isApproved?: boolean })?.isApproved) {
             router.push('/manufacturer/dashboard');
             return;
           }
@@ -227,7 +203,7 @@ export default function ManufacturerPendingPage() {
                 <div>
                   <p className="font-medium text-gray-900">Final Decision</p>
                   <p className="text-sm text-gray-600 mt-1">
-                    You'll receive a notification with the approval decision via email.
+                    You&apos;ll receive a notification with the approval decision via email.
                   </p>
                 </div>
               </div>

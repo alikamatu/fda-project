@@ -2,13 +2,11 @@
 
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useManufacturerBatchDetail } from '@/hooks/useBatches';
-import { Badge } from '@/components/ui/Badge';
+import { Badge, BadgeProps } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { formatDate } from '@/lib/constants';
 import Link from 'next/link';
 import { ChevronLeftIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
-import { QRCodeSVG } from 'qrcode.react';
-import { useRef } from 'react';
 import { useParams } from 'next/navigation';
 
 export default function BatchDetailPage() {
@@ -26,7 +24,7 @@ export default function BatchDetailPage() {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): BadgeProps['variant'] => {
     switch (status) {
       case 'APPROVED':
         return 'success';
@@ -35,7 +33,7 @@ export default function BatchDetailPage() {
       case 'PENDING':
         return 'warning';
       default:
-        return 'default';
+        return 'neutral';
     }
   };
 
@@ -166,7 +164,7 @@ export default function BatchDetailPage() {
                       </p>
                     )}
                   </div>
-                  <Badge variant={code.isUsed ? 'secondary' : 'success'}>
+                  <Badge variant={code.isUsed ? 'neutral' : 'success'}>
                     {code.isUsed ? 'Used' : 'Active'}
                   </Badge>
                 </div>

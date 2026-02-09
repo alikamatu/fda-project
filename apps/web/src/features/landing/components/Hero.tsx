@@ -38,10 +38,13 @@ export function Hero({
 
   // Auto-start animation for reduced motion
   useEffect(() => {
-    if (shouldReduceMotion) {
-      setRevealComplete(true);
+    if (shouldReduceMotion && !revealComplete) {
+      const timer = setTimeout(() => {
+        setRevealComplete(true);
+      }, 0);
+      return () => clearTimeout(timer);
     }
-  }, [shouldReduceMotion]);
+  }, [shouldReduceMotion, revealComplete]);
 
   const handleRevealComplete = () => {
     setRevealComplete(true);

@@ -9,7 +9,7 @@ export class ApiError extends Error {
   }
 }
 
-export async function fetcher<T = any>(
+export async function fetcher<T = unknown>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {

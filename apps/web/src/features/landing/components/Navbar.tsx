@@ -15,10 +15,9 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Verify Product', href: '/verify' },
-  { label: 'How It Works', href: '/how-it-works' },
-  { label: 'Features', href: '/features' },
-  { label: 'Trust & Compliance', href: '/trust' },
+  { label: 'How It Works', href: '#how-it-works' },
+  { label: 'Features', href: '#features' },
+  { label: 'Trust & Compliance', href: '#trust' },
   { label: 'Register', href: '/auth/register', primary: true },
 ];
 
@@ -38,8 +37,13 @@ export function Navbar() {
 
   // Close mobile menu when route changes
   useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        setIsOpen(false);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [pathname, isOpen]);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {

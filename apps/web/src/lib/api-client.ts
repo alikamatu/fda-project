@@ -23,7 +23,7 @@ class ApiClient {
 
     // Add Authorization header if token exists
     if (token) {
-      (defaultHeaders as any)['Authorization'] = `Bearer ${token}`;
+      (defaultHeaders as Record<string, string>)['Authorization'] = `Bearer ${token}`;
     }
 
     return {
@@ -105,7 +105,7 @@ class ApiClient {
     });
   }
 
-  post<T>(endpoint: string, body?: any, options?: RequestInit): Promise<T> {
+  post<T>(endpoint: string, body?: unknown, options?: RequestInit): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: 'POST',
@@ -113,7 +113,7 @@ class ApiClient {
     });
   }
 
-  put<T>(endpoint: string, body?: any, options?: RequestInit): Promise<T> {
+  put<T>(endpoint: string, body?: unknown, options?: RequestInit): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: 'PUT',
@@ -121,7 +121,7 @@ class ApiClient {
     });
   }
 
-  patch<T>(endpoint: string, body?: any, options?: RequestInit): Promise<T> {
+  patch<T>(endpoint: string, body?: unknown, options?: RequestInit): Promise<T> {
     return this.request<T>(endpoint, {
       ...options,
       method: 'PATCH',

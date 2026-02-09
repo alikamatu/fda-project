@@ -20,13 +20,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {required && <span className="text-red-500 ml-0.5">*</span>}
           </label>
         )}
-        <div className="relative">
+        <motion.div className="relative" whileFocus={{ scale: 1.005 }} transition={{ duration: 0.1 }}>
           {icon && (
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
               {icon}
             </div>
           )}
-          <motion.input
+          <input
             ref={ref}
             className={`
               w-full py-2 text-sm bg-white border rounded-md
@@ -41,11 +41,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               transition-colors
               ${className}
             `}
-            whileFocus={{ scale: 1.005 }}
-            transition={{ duration: 0.1 }}
-            {...(props as any)}
+            {...props}
           />
-        </div>
+        </motion.div>
         {error && (
           <motion.p
             initial={{ opacity: 0, y: -5 }}

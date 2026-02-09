@@ -51,7 +51,7 @@ export function Trust({
   
 
   return (
-    <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50/30">
+    <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50/30" id="trust">
       <Container>
         <div className="max-w-7xl mx-auto">
           {/* Rounded Container (matches all previous sections) */}

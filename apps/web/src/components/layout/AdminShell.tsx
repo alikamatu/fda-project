@@ -31,10 +31,13 @@ export function AdminShell({ children }: AdminShellProps) {
 
   // Close sidebar on mobile when route changes
   useEffect(() => {
-    if (isMobile) {
-      setSidebarOpen(false);
+    if (isMobile && sidebarOpen) {
+      const timer = setTimeout(() => {
+        setSidebarOpen(false);
+      }, 0);
+      return () => clearTimeout(timer);
     }
-  }, [router, isMobile]);
+  }, [router, isMobile, sidebarOpen]);
 
   // Redirect non-admin users
   // But give some time for loading in case of temporary network issues

@@ -4,6 +4,7 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { VerificationsTable } from '@/components/verifications/VerificationsTable';
 import { VerificationFilters } from '@/components/verifications/VerificationFilters';
 import { useVerifications } from '@/hooks/useVerifications';
+import type { GetVerificationsParams, VerificationStatus } from '@/types/verification';
 
 export default function VerificationsPage() {
   const { data, isLoading, params, updateParams } = useVerifications(); // Using default hook behavior
@@ -18,8 +19,11 @@ export default function VerificationsPage() {
     updateParams({ page: newPage });
   };
 
-  const handleFilterChange = (newFilters: any) => {
-    updateParams(newFilters);
+  const handleFilterChange = (newFilters: Partial<GetVerificationsParams>) => {
+    updateParams({
+      ...newFilters,
+      status: newFilters.status ? String(newFilters.status) : undefined
+    } as Partial<GetVerificationsParams>);
   };
 
   return (

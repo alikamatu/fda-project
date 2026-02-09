@@ -49,7 +49,7 @@ export function NotificationPreferences() {
           <h2 className="text-sm font-semibold text-gray-900">Notifications</h2>
           <p className="text-xs text-gray-500 mt-0.5">Manage your notification preferences</p>
         </div>
-        <Badge variant="default" size="sm">Coming Soon</Badge>
+        <Badge variant="neutral" size="sm">Coming Soon</Badge>
       </div>
 
       <div className="divide-y divide-gray-100">

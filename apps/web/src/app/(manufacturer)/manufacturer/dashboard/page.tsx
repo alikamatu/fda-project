@@ -11,10 +11,8 @@ import {
   useRecentProducts,
   useRecentVerifications,
 } from '@/hooks/useManufacturerDashboard';
-import { useCurrentUser } from '@/hooks/useAuth';
 
 export default function ManufacturerDashboard() {
-  const { data: user } = useCurrentUser();
   const { data: stats, isLoading: statsLoading } = useManufacturerStats();
   const { data: recentProducts, isLoading: productsLoading } = useRecentProducts();
   const { data: recentVerifications, isLoading: verificationsLoading } = useRecentVerifications();

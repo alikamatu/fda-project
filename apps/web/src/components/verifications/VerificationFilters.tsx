@@ -1,9 +1,8 @@
 'use client';
 
 import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
-import { GetVerificationsParams } from '@/services/manufacturer.service';
+import { GetVerificationsParams } from '@/types/verification';
 import { useState } from 'react';
 
 interface VerificationFiltersProps {
@@ -12,7 +11,7 @@ interface VerificationFiltersProps {
 }
 
 export function VerificationFilters({ filters, onFilterChange }: VerificationFiltersProps) {
-  const [localFilters, setLocalFilters] = useState(filters);
+  const [localFilters, setLocalFilters] = useState<GetVerificationsParams>(filters);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,8 +19,8 @@ export function VerificationFilters({ filters, onFilterChange }: VerificationFil
   };
 
   const handleReset = () => {
-    const reset = { status: '', startDate: '', endDate: '', productId: '' };
-    setLocalFilters(reset);
+    const reset: Partial<GetVerificationsParams> = { status: undefined, startDate: '', endDate: '' };
+    setLocalFilters(reset as GetVerificationsParams);
     onFilterChange(reset);
   };
 
@@ -32,7 +31,7 @@ export function VerificationFilters({ filters, onFilterChange }: VerificationFil
         <select
           className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
           value={localFilters.status || ''}
-          onChange={(e) => setLocalFilters({ ...localFilters, status: e.target.value })}
+          onChange={(e) => setLocalFilters({ ...localFilters, status: e.target.value as any || undefined })}
         >
           <option value="">All Statuses</option>
           <option value="VALID">Valid</option>

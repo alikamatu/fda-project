@@ -1,10 +1,10 @@
-import { UseFormRegister } from 'react-hook-form';
+import { UseFormRegister, FieldErrors } from 'react-hook-form';
 import { Input } from '@/components/ui/Input';
 import { ManufacturerRegisterFormData } from '@/schemas/auth.schema';
 
 interface ManufacturerFieldsProps {
   register: UseFormRegister<ManufacturerRegisterFormData>;
-  errors: any;
+  errors: FieldErrors<ManufacturerRegisterFormData>;
 }
 
 export function ManufacturerFields({ register, errors }: ManufacturerFieldsProps) {

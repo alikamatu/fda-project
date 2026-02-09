@@ -3,7 +3,8 @@ import { ManufacturerUserParams, UsersResponse } from '@/types/admin-users';
 
 export const AdminUsersService = {
   getManufacturerUsers: async (params: ManufacturerUserParams): Promise<UsersResponse> => {
-    return apiClient.get('/users/manufacturers', { params });
+    const queryString = new URLSearchParams(params as any).toString();
+    return apiClient.get(`/users/manufacturers${queryString ? '?' + queryString : ''}`);
   },
 
   activateUser: async (userId: string): Promise<void> => {

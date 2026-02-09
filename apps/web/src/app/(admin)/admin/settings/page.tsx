@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { useUserSettings } from '@/hooks/useSettings';
 import { AccountInfoForm } from '@/components/settings/AccountInfoForm';
 import { SecurityForm } from '@/components/settings/SecurityForm';
@@ -16,7 +16,7 @@ export default function SettingsPage() {
     typeof window !== 'undefined' && 
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const containerVariants = prefersReducedMotion
+  const containerVariants: Variants = prefersReducedMotion
     ? {}
     : {
         hidden: { opacity: 0 },
@@ -28,7 +28,7 @@ export default function SettingsPage() {
         },
       };
 
-  const itemVariants = prefersReducedMotion
+  const itemVariants: Variants = prefersReducedMotion
     ? {}
     : {
         hidden: { opacity: 0, y: 10 },

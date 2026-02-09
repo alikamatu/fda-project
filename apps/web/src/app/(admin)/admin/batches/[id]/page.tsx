@@ -2,7 +2,7 @@
 
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useAdminBatchDetail, useVerifyBatch, useGenerateBatchQRCode } from '@/hooks/useBatches';
-import { Badge } from '@/components/ui/Badge';
+import { Badge, BadgeProps } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { formatDate } from '@/lib/constants';
 import Link from 'next/link';
@@ -19,7 +19,7 @@ export default function AdminBatchDetailPage() {
   const [notes, setNotes] = useState<string>('');
   const [showRejectForm, setShowRejectForm] = useState(false);
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): BadgeProps['variant'] => {
     switch (status) {
       case 'APPROVED':
         return 'success';
@@ -28,14 +28,14 @@ export default function AdminBatchDetailPage() {
       case 'PENDING':
         return 'warning';
       default:
-        return 'default';
+        return 'neutral';
     }
   };
 
   const handleApprove = async () => {
     try {
       await verifyBatchMutation.mutateAsync({
-        batchId: params.id,
+        batchId: batchId,
         status: 'APPROVED',
         notes,
       });
@@ -51,7 +51,7 @@ export default function AdminBatchDetailPage() {
     }
     try {
       await verifyBatchMutation.mutateAsync({
-        batchId: params.id,
+        batchId: batchId,
         status: 'REJECTED',
         notes,
       });
@@ -64,7 +64,7 @@ export default function AdminBatchDetailPage() {
 
   const handleGenerateQR = async () => {
     try {
-      await generateQRMutation.mutateAsync(params.id);
+      await generateQRMutation.mutateAsync(batchId);
     } catch (err) {
       console.error('Failed to generate QR code:', err);
     }
@@ -83,7 +83,7 @@ export default function AdminBatchDetailPage() {
   }
 
   if (isError) {
-    const message = (error as any)?.message || 'An error occurred while fetching the batch';
+    const message = (error as { message?: string })?.message || 'An error occurred while fetching the batch';
     return (
       <PageContainer title="Batch Error">
         <div className="text-center py-12">
@@ -217,7 +217,7 @@ export default function AdminBatchDetailPage() {
                   <div className="flex-1">
                     <p className="font-mono text-sm">{code.code}</p>
                   </div>
-                  <Badge variant={code.isUsed ? 'secondary' : 'success'}>
+                  <Badge variant={code.isUsed ? 'neutral' : 'success'}>
                     {code.isUsed ? 'Used' : 'Active'}
                   </Badge>
                 </div>
@@ -323,7 +323,8 @@ export default function AdminBatchDetailPage() {
               {batch.qrCodeUrl ? (
                 <div className="space-y-3">
                   <div className="border border-gray-200 rounded p-3 bg-gray-50">
-                    <img src={batch.qrCodeUrl} alt="Batch QR Code" className="w-full" />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={batch.qrCodeUrl} alt="Batch QR Code" className="w-full" />
                   </div>
                   <p className="text-sm text-gray-600">QR code generated successfully</p>
                 </div>

@@ -22,9 +22,6 @@ export function HeroImageReveal({
   const shouldReduceMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleAnimationComplete = () => {
-    onRevealComplete?.();
-  };
 
   // Track overlays completion so `onRevealComplete` is only called once
   const overlaysCompletedRef = useRef(0);

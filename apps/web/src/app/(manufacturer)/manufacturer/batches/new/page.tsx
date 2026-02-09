@@ -4,7 +4,6 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { useProducts } from '@/hooks/useProducts';
 import { BatchForm } from '@/components/manufacturer/BatchForm';
 import { useState } from 'react';
-import { Button } from '@/components/ui/Button';
 
 export default function NewBatchPage() {
   const { data: products, isLoading } = useProducts();
@@ -48,7 +47,7 @@ export default function NewBatchPage() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">Choose a product...</option>
-            {products.map((product: any) => (
+            {products.map((product) => (
               <option key={product.id} value={product.id}>
                 {product.productName} ({product.productCode})
               </option>

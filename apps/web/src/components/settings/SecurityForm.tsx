@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Card } from '@/components/ui/Card';
@@ -37,7 +37,7 @@ export function SecurityForm() {
     register,
     handleSubmit,
     reset,
-    watch,
+    control,
     formState: { errors, isValid },
   } = useForm<PasswordFormData>({
     resolver: zodResolver(passwordSchema),
@@ -49,7 +49,11 @@ export function SecurityForm() {
     },
   });
 
-  const newPassword = watch('newPassword');
+  const newPassword = useWatch({
+    control,
+    name: 'newPassword',
+    defaultValue: '',
+  });
 
   const getPasswordStrength = (password: string): { text: string; color: string } => {
     if (!password) return { text: '', color: '' };

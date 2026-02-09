@@ -51,7 +51,8 @@ export const AuthService = {
 
   async registerUser(data: UserRegisterRequest): Promise<AuthUser> {
     // Remove confirmPassword before sending to API
-    const { confirmPassword: _, ...payload } = data;
+    const payload = { ...data } as Record<string, unknown>;
+    delete payload.confirmPassword;
     const response = await apiClient.post<RegisterResponse>('/auth/register/user', payload);
     return {
       id: response.id,
@@ -64,7 +65,9 @@ export const AuthService = {
 
   async registerManufacturer(data: ManufacturerRegisterRequest): Promise<ManufacturerRegisterResponse> {
     // Remove confirmPassword and role before sending to API (API sets role automatically)
-    const { confirmPassword: _, role: __, ...payload } = data;
+    const payload = { ...data } as Record<string, unknown>;
+    delete payload.confirmPassword;
+    delete payload.role;
     return apiClient.post<ManufacturerRegisterResponse>('/auth/register/manufacturer', payload);
   },
 

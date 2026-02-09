@@ -23,7 +23,7 @@ export const useCreateBatch = () => {
   return useMutation({
     mutationFn: (data: CreateBatchPayload) => 
       batchesService.createBatch(data.productId, data),
-    onSuccess: (data: any) => {
+    onSuccess: (data: BatchResponse) => {
       queryClient.invalidateQueries({
         queryKey: ['batches', data.productId],
       });
@@ -63,7 +63,7 @@ export const useVerifyBatch = () => {
         status: data.status,
         notes: data.notes,
       }),
-    onSuccess: (data: any) => {
+    onSuccess: (data: BatchResponse) => {
       queryClient.invalidateQueries({
         queryKey: ['admin-batches'],
       });
@@ -80,7 +80,7 @@ export const useGenerateBatchQRCode = () => {
   return useMutation({
     mutationFn: (batchId: string) => 
       batchesService.generateBatchQRCode(batchId),
-    onSuccess: (data: any) => {
+    onSuccess: (data: BatchResponse) => {
       queryClient.invalidateQueries({
         queryKey: ['admin-batch', data.id],
       });

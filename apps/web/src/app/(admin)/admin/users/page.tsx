@@ -98,9 +98,9 @@ export default function AdminUsersPage() {
         search={search}
         onSearchChange={setSearch}
         statusFilter={statusFilter}
-        onStatusChange={(val) => setStatusFilter(val as any)}
+        onStatusChange={(val) => setStatusFilter(val as 'all' | 'active' | 'inactive')}
         approvalFilter={approvalFilter}
-        onApprovalChange={(val) => setApprovalFilter(val as any)}
+        onApprovalChange={(val) => setApprovalFilter(val as 'all' | 'approved' | 'pending')}
         onClearFilters={handleClearFilters}
       />
 

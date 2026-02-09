@@ -21,28 +21,28 @@ export default function AdminBatchesPage() {
       <div className="mb-6 flex gap-2 flex-wrap">
         <Button
           size="sm"
-          variant={!statusFilter ? 'default' : 'outline'}
+          variant={!statusFilter ? 'primary' : 'outline'}
           onClick={() => setStatusFilter(undefined)}
         >
           All Batches
         </Button>
         <Button
           size="sm"
-          variant={statusFilter === 'PENDING' ? 'default' : 'outline'}
+          variant={statusFilter === 'PENDING' ? 'primary' : 'outline'}
           onClick={() => setStatusFilter('PENDING')}
         >
           Pending Review
         </Button>
         <Button
           size="sm"
-          variant={statusFilter === 'APPROVED' ? 'default' : 'outline'}
+          variant={statusFilter === 'APPROVED' ? 'primary' : 'outline'}
           onClick={() => setStatusFilter('APPROVED')}
         >
           Approved
         </Button>
         <Button
           size="sm"
-          variant={statusFilter === 'REJECTED' ? 'default' : 'outline'}
+          variant={statusFilter === 'REJECTED' ? 'primary' : 'outline'}
           onClick={() => setStatusFilter('REJECTED')}
         >
           Rejected
