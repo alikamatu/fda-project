@@ -116,7 +116,8 @@ export class VerificationService {
       
     } catch (error) {
       // Even if there's an error, try to log the attempt
-      await this.logErrorAttempt(dto, request, userId, error.message);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      await this.logErrorAttempt(dto, request, userId, errorMessage);
       throw new InternalServerErrorException('Verification failed. Please try again.');
     }
   }

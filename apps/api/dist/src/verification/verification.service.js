@@ -100,7 +100,8 @@ let VerificationService = class VerificationService {
             return this.buildResponse(status, productData, requestId, timestamp);
         }
         catch (error) {
-            await this.logErrorAttempt(dto, request, userId, error.message);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            await this.logErrorAttempt(dto, request, userId, errorMessage);
             throw new common_1.InternalServerErrorException('Verification failed. Please try again.');
         }
     }

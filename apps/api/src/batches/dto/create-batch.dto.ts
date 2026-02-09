@@ -5,19 +5,19 @@ export class CreateBatchDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
-  batchNumber: string;
+  batchNumber!: string;
 
   @IsNotEmpty()
   @IsDateString()
-  manufactureDate: string;
+  manufactureDate!: string;
 
   @IsNotEmpty()
   @IsDateString()
   @Validate(IsAfterConstraint, ['manufactureDate'])
-  expiryDate: string;
+  expiryDate!: string;
 
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
-  quantity: number;
+  quantity!: number;
 }
