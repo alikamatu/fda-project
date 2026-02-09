@@ -17,6 +17,11 @@ export declare class VerificationService {
         byStatus: {};
     }>;
     getRecentVerifications(limit?: number): Promise<({
+        user: {
+            id: string;
+            email: string;
+            role: import(".prisma/client").$Enums.UserRole;
+        } | null;
         verificationCode: {
             productBatch: {
                 product: {
@@ -36,17 +41,17 @@ export declare class VerificationService {
                 };
             } & {
                 id: string;
-                status: import(".prisma/client").$Enums.BatchStatus;
-                verifiedAt: Date | null;
                 createdAt: Date;
                 updatedAt: Date;
                 batchNumber: string;
                 manufactureDate: Date;
                 expiryDate: Date;
                 quantity: number;
+                status: import(".prisma/client").$Enums.BatchStatus;
                 notes: string | null;
                 qrCodeUrl: string | null;
                 productId: string;
+                verifiedAt: Date | null;
             };
         } & {
             id: string;
@@ -57,20 +62,15 @@ export declare class VerificationService {
             productBatchId: string;
             usedAt: Date | null;
         };
-        user: {
-            id: string;
-            email: string;
-            role: import(".prisma/client").$Enums.UserRole;
-        } | null;
     } & {
         id: string;
         status: import(".prisma/client").$Enums.VerificationStatus;
+        verifiedAt: Date;
+        userId: string | null;
         location: string | null;
         ipAddress: string | null;
         deviceInfo: string | null;
         verificationCodeId: string;
-        userId: string | null;
-        verifiedAt: Date;
     })[]>;
     getVerificationsForAdmin(filters: {
         status?: string;
@@ -81,6 +81,11 @@ export declare class VerificationService {
         limit?: number;
     }): Promise<{
         data: ({
+            user: {
+                id: string;
+                email: string;
+                role: import(".prisma/client").$Enums.UserRole;
+            } | null;
             verificationCode: {
                 productBatch: {
                     product: {
@@ -102,17 +107,17 @@ export declare class VerificationService {
                     };
                 } & {
                     id: string;
-                    status: import(".prisma/client").$Enums.BatchStatus;
-                    verifiedAt: Date | null;
                     createdAt: Date;
                     updatedAt: Date;
                     batchNumber: string;
                     manufactureDate: Date;
                     expiryDate: Date;
                     quantity: number;
+                    status: import(".prisma/client").$Enums.BatchStatus;
                     notes: string | null;
                     qrCodeUrl: string | null;
                     productId: string;
+                    verifiedAt: Date | null;
                 };
             } & {
                 id: string;
@@ -123,20 +128,15 @@ export declare class VerificationService {
                 productBatchId: string;
                 usedAt: Date | null;
             };
-            user: {
-                id: string;
-                email: string;
-                role: import(".prisma/client").$Enums.UserRole;
-            } | null;
         } & {
             id: string;
             status: import(".prisma/client").$Enums.VerificationStatus;
+            verifiedAt: Date;
+            userId: string | null;
             location: string | null;
             ipAddress: string | null;
             deviceInfo: string | null;
             verificationCodeId: string;
-            userId: string | null;
-            verifiedAt: Date;
         })[];
         total: number;
         page: number;
@@ -144,6 +144,12 @@ export declare class VerificationService {
         totalPages: number;
     }>;
     getVerificationDetailsForAdmin(verificationId: string): Promise<{
+        user: {
+            id: string;
+            email: string;
+            fullName: string;
+            role: import(".prisma/client").$Enums.UserRole;
+        } | null;
         verificationCode: {
             productBatch: {
                 product: {
@@ -167,17 +173,17 @@ export declare class VerificationService {
                 };
             } & {
                 id: string;
-                status: import(".prisma/client").$Enums.BatchStatus;
-                verifiedAt: Date | null;
                 createdAt: Date;
                 updatedAt: Date;
                 batchNumber: string;
                 manufactureDate: Date;
                 expiryDate: Date;
                 quantity: number;
+                status: import(".prisma/client").$Enums.BatchStatus;
                 notes: string | null;
                 qrCodeUrl: string | null;
                 productId: string;
+                verifiedAt: Date | null;
             };
         } & {
             id: string;
@@ -188,21 +194,15 @@ export declare class VerificationService {
             productBatchId: string;
             usedAt: Date | null;
         };
-        user: {
-            id: string;
-            fullName: string;
-            email: string;
-            role: import(".prisma/client").$Enums.UserRole;
-        } | null;
     } & {
         id: string;
         status: import(".prisma/client").$Enums.VerificationStatus;
+        verifiedAt: Date;
+        userId: string | null;
         location: string | null;
         ipAddress: string | null;
         deviceInfo: string | null;
         verificationCodeId: string;
-        userId: string | null;
-        verifiedAt: Date;
     }>;
     exportVerificationsAsCsv(filters: {
         status?: string;
