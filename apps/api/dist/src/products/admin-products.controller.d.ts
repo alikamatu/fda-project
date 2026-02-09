@@ -44,8 +44,8 @@ export declare class AdminProductsController {
             status: import(".prisma/client").$Enums.BatchStatus;
             notes: string | null;
             qrCodeUrl: string | null;
-            verifiedAt: Date | null;
             productId: string;
+            verifiedAt: Date | null;
         }[];
     } & {
         id: string;

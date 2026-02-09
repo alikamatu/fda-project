@@ -7,11 +7,11 @@ export declare class AdminBatchesController {
     getAllBatches(query: QueryBatchDto): Promise<{
         productName: string;
         product: {
+            id: string;
             manufacturer: {
                 id: string;
                 companyName: string;
             };
-            id: string;
             productName: string;
             productCode: string;
         };
@@ -20,6 +20,8 @@ export declare class AdminBatchesController {
             code: string;
         }[];
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         batchNumber: string;
         manufactureDate: Date;
         expiryDate: Date;
@@ -27,10 +29,8 @@ export declare class AdminBatchesController {
         status: import(".prisma/client").$Enums.BatchStatus;
         notes: string | null;
         qrCodeUrl: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        verifiedAt: Date | null;
         productId: string;
+        verifiedAt: Date | null;
     }[]>;
     getProductBatches(productId: string): Promise<({
         product: {
@@ -44,6 +44,8 @@ export declare class AdminBatchesController {
         }[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         batchNumber: string;
         manufactureDate: Date;
         expiryDate: Date;
@@ -51,20 +53,18 @@ export declare class AdminBatchesController {
         status: import(".prisma/client").$Enums.BatchStatus;
         notes: string | null;
         qrCodeUrl: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        verifiedAt: Date | null;
         productId: string;
+        verifiedAt: Date | null;
     })[]>;
     getBatchDetail(batchId: string): Promise<{
         product: {
+            id: string;
             manufacturer: {
                 id: string;
                 companyName: string;
                 contactEmail: string;
                 contactPhone: string | null;
             };
-            id: string;
             productName: string;
             productCode: string;
             category: import(".prisma/client").$Enums.ProductCategory;
@@ -85,6 +85,8 @@ export declare class AdminBatchesController {
         }[];
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         batchNumber: string;
         manufactureDate: Date;
         expiryDate: Date;
@@ -92,10 +94,8 @@ export declare class AdminBatchesController {
         status: import(".prisma/client").$Enums.BatchStatus;
         notes: string | null;
         qrCodeUrl: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        verifiedAt: Date | null;
         productId: string;
+        verifiedAt: Date | null;
     }>;
     verifyBatch(batchId: string, verifyBatchDto: VerifyBatchDto): Promise<{
         product: {
@@ -103,6 +103,8 @@ export declare class AdminBatchesController {
         };
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         batchNumber: string;
         manufactureDate: Date;
         expiryDate: Date;
@@ -110,10 +112,8 @@ export declare class AdminBatchesController {
         status: import(".prisma/client").$Enums.BatchStatus;
         notes: string | null;
         qrCodeUrl: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        verifiedAt: Date | null;
         productId: string;
+        verifiedAt: Date | null;
     }>;
     generateQRCode(batchId: string): Promise<{
         product: {
@@ -121,6 +121,8 @@ export declare class AdminBatchesController {
         };
     } & {
         id: string;
+        createdAt: Date;
+        updatedAt: Date;
         batchNumber: string;
         manufactureDate: Date;
         expiryDate: Date;
@@ -128,9 +130,7 @@ export declare class AdminBatchesController {
         status: import(".prisma/client").$Enums.BatchStatus;
         notes: string | null;
         qrCodeUrl: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        verifiedAt: Date | null;
         productId: string;
+        verifiedAt: Date | null;
     }>;
 }

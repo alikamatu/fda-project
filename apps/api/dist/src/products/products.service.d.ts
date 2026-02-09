@@ -57,8 +57,8 @@ export declare class ProductsService {
             status: import(".prisma/client").$Enums.BatchStatus;
             notes: string | null;
             qrCodeUrl: string | null;
-            verifiedAt: Date | null;
             productId: string;
+            verifiedAt: Date | null;
         })[];
     } & {
         id: string;
@@ -124,8 +124,8 @@ export declare class ProductsService {
             status: import(".prisma/client").$Enums.BatchStatus;
             notes: string | null;
             qrCodeUrl: string | null;
-            verifiedAt: Date | null;
             productId: string;
+            verifiedAt: Date | null;
         }[];
     } & {
         id: string;

@@ -43,8 +43,8 @@ export declare class VerificationController {
                 status: import(".prisma/client").$Enums.BatchStatus;
                 notes: string | null;
                 qrCodeUrl: string | null;
-                verifiedAt: Date | null;
                 productId: string;
+                verifiedAt: Date | null;
             };
         } & {
             id: string;
@@ -57,9 +57,9 @@ export declare class VerificationController {
         };
     } & {
         id: string;
-        userId: string | null;
         status: import(".prisma/client").$Enums.VerificationStatus;
         verifiedAt: Date;
+        userId: string | null;
         location: string | null;
         ipAddress: string | null;
         deviceInfo: string | null;
