@@ -4,7 +4,7 @@ import { VerifyProductDto } from './dto/verify-product.dto';
 import { VerificationResponse, ValidVerificationResponse, ExpiredVerificationResponse, FakeVerificationResponse } from './interfaces/verification-response.interface';
 import { VerificationStatus, ProductCategory } from '@prisma/client';
 import { Request } from 'express';
-import { differenceInDays, isAfter, parseISO, isValid } from 'date-fns';
+import { differenceInDays, isAfter } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
