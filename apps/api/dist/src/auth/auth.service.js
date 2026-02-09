@@ -113,6 +113,10 @@ let AuthService = class AuthService {
             console.warn('[AuthService] User not found in database');
             throw new common_1.UnauthorizedException('Invalid credentials');
         }
+        if (!user.isActive) {
+            console.warn('[AuthService] User account is inactive');
+            throw new common_1.ForbiddenException('Account is inactive. Please contact administrator.');
+        }
         console.log('[AuthService] User active status:', user.isActive);
         if (!user.isActive) {
             console.warn('[AuthService] User account is inactive');

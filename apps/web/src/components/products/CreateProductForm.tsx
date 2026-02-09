@@ -17,11 +17,6 @@ const productSchema = z.object({
   category: z.nativeEnum(ProductCategory, {
     errorMap: () => ({ message: 'Please select a valid category' }),
   }),
-  batchNumber: z.string().min(1, 'Batch number is required'),
-  expiryDate: z.string().refine((date) => new Date(date) > new Date(), {
-    message: 'Expiry date must be in the future',
-  }),
-  quantity: z.preprocess((val) => Number(val), z.number().min(1, 'Quantity must be at least 1')),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -87,33 +82,6 @@ export function CreateProductForm() {
             <p className="text-sm text-red-600 mt-1">{errors.category.message}</p>
           )}
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Input
-            label="Batch Number"
-            {...register('batchNumber')}
-            error={errors.batchNumber?.message}
-            placeholder="e.g. BATCH-001"
-            required
-          />
-          <Input
-            label="Quantity"
-            type="number"
-            {...register('quantity')}
-            error={errors.quantity?.message}
-            placeholder="e.g. 1000"
-            required
-            min={1}
-          />
-        </div>
-
-        <Input
-          label="Expiry Date"
-          type="date"
-          {...register('expiryDate')}
-          error={errors.expiryDate?.message}
-          required
-        />
 
         <div className="space-y-1">
           <label className="block text-sm font-medium text-gray-700">

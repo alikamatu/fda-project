@@ -28,13 +28,13 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", Date)
+    __metadata("design:type", String)
 ], CreateBatchDto.prototype, "manufactureDate", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.IsDateString)(),
     (0, class_validator_1.Validate)(date_validator_1.IsAfterConstraint, ['manufactureDate']),
-    __metadata("design:type", Date)
+    __metadata("design:type", String)
 ], CreateBatchDto.prototype, "expiryDate", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),

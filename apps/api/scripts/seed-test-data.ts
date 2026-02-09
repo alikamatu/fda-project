@@ -15,7 +15,7 @@ async function main() {
   console.log('Seeding test data...');
 
   // Create test admin
-  const adminPassword = await bcrypt.hash('Admin1234', 10);
+  const adminPassword = await bcrypt.hash('Admin@1234', 10);
   const admin = await prisma.user.create({
     data: {
       email: 'admin@fda.gov',

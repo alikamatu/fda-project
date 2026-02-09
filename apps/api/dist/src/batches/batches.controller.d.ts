@@ -11,14 +11,20 @@ export declare class BatchesController {
             productCode: string;
         };
         id: string;
-        createdAt: Date;
         batchNumber: string;
         manufactureDate: Date;
         expiryDate: Date;
         quantity: number;
+        status: import(".prisma/client").$Enums.BatchStatus;
+        notes: string | null;
+        qrCodeUrl: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        verifiedAt: Date | null;
         productId: string;
     }>;
     getAllBatches(req: any, productId: string): Promise<{
+        productName: string;
         qrCodeBase64: string;
         verificationCodes: {
             id: string;
@@ -28,13 +34,53 @@ export declare class BatchesController {
             usedAt: Date | null;
         }[];
         id: string;
-        createdAt: Date;
         batchNumber: string;
         manufactureDate: Date;
         expiryDate: Date;
         quantity: number;
+        status: import(".prisma/client").$Enums.BatchStatus;
+        notes: string | null;
+        qrCodeUrl: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        verifiedAt: Date | null;
         productId: string;
     }[]>;
+    getBatchById(req: any, batchId: string): Promise<{
+        product: {
+            manufacturer: {
+                id: string;
+                companyName: string;
+                contactEmail: string;
+                contactPhone: string | null;
+            };
+            id: string;
+            productName: string;
+            productCode: string;
+            category: import(".prisma/client").$Enums.ProductCategory;
+        };
+        verificationCodes: {
+            id: string;
+            createdAt: Date;
+            code: string;
+            qrImageUrl: string | null;
+            isUsed: boolean;
+            usedAt: Date | null;
+        }[];
+    } & {
+        id: string;
+        batchNumber: string;
+        manufactureDate: Date;
+        expiryDate: Date;
+        quantity: number;
+        status: import(".prisma/client").$Enums.BatchStatus;
+        notes: string | null;
+        qrCodeUrl: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        verifiedAt: Date | null;
+        productId: string;
+    }>;
     getBatch(req: any, productId: string, batchId: string): Promise<{
         qrCodeBase64: string;
         verificationCodes: {
@@ -44,23 +90,28 @@ export declare class BatchesController {
             isUsed: boolean;
             usedAt: Date | null;
             logs: {
-                id: string;
                 user: {
                     id: string;
-                    email: string;
                     fullName: string;
+                    email: string;
                 } | null;
+                id: string;
                 status: import(".prisma/client").$Enums.VerificationStatus;
-                location: string | null;
                 verifiedAt: Date;
+                location: string | null;
             }[];
         }[];
         id: string;
-        createdAt: Date;
         batchNumber: string;
         manufactureDate: Date;
         expiryDate: Date;
         quantity: number;
+        status: import(".prisma/client").$Enums.BatchStatus;
+        notes: string | null;
+        qrCodeUrl: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        verifiedAt: Date | null;
         productId: string;
     }>;
     getVerificationCodes(req: any, productId: string, batchId: string): Promise<{

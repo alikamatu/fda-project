@@ -10,12 +10,13 @@ exports.BatchesModule = void 0;
 const common_1 = require("@nestjs/common");
 const batches_service_1 = require("./batches.service");
 const batches_controller_1 = require("./batches.controller");
+const admin_batches_controller_1 = require("./admin-batches.controller");
 let BatchesModule = class BatchesModule {
 };
 exports.BatchesModule = BatchesModule;
 exports.BatchesModule = BatchesModule = __decorate([
     (0, common_1.Module)({
-        controllers: [batches_controller_1.BatchesController],
+        controllers: [batches_controller_1.BatchesController, admin_batches_controller_1.AdminBatchesController],
         providers: [batches_service_1.BatchesService],
         exports: [batches_service_1.BatchesService],
     })

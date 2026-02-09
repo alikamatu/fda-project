@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException, ConflictException, BadRequestException } from '@nestjs/common';
 import * as QRCode from 'qrcode';
 import { v4 as uuidv4 } from 'uuid';
+import { BatchStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateBatchDto } from './dto/create-batch.dto';
 import { QRCodeData, BatchWithQR } from './types/qr-code.types';
@@ -57,8 +58,8 @@ export class BatchesService {
       const batch = await tx.productBatch.create({
         data: {
           batchNumber: dto.batchNumber,
-          manufactureDate: dto.manufactureDate,
-          expiryDate: dto.expiryDate,
+          manufactureDate: new Date(dto.manufactureDate),
+          expiryDate: new Date(dto.expiryDate),
           quantity: dto.quantity,
           productId,
         },
@@ -91,8 +92,8 @@ export class BatchesService {
       batchId: result.id,
       productName: product.productName,
       batchNumber: dto.batchNumber,
-      manufactureDate: dto.manufactureDate.toISOString(),
-      expiryDate: dto.expiryDate.toISOString(),
+      manufactureDate: dto.manufactureDate,
+      expiryDate: dto.expiryDate,
     };
 
     // Generate QR code
@@ -165,6 +166,7 @@ export class BatchesService {
 
         return {
           ...batch,
+          productName: product.productName,
           qrCodeBase64,
         };
       })
@@ -322,6 +324,276 @@ export class BatchesService {
     }
     
     return codes;
+  }
+
+  // Admin methods for batch verification
+  async findAllBatchesForAdmin(status?: string) {
+    const whereClause: any = {};
+    
+    if (status) {
+      whereClause.status = status;
+    }
+
+    const batches = await this.prisma.productBatch.findMany({
+      where: whereClause,
+      include: {
+        product: {
+          select: {
+            id: true,
+            productName: true,
+            productCode: true,
+            manufacturer: {
+              select: {
+                id: true,
+                companyName: true,
+              },
+            },
+          },
+        },
+        verificationCodes: {
+          select: {
+            id: true,
+            code: true,
+          },
+          take: 5,
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    // Map batches to include productName as a top-level field
+    return batches.map(batch => ({
+      ...batch,
+      productName: batch.product.productName,
+    }));
+  }
+
+  async findBatchesByProductForAdmin(productId: string) {
+    const batches = await this.prisma.productBatch.findMany({
+      where: {
+        productId,
+      },
+      include: {
+        product: {
+          select: {
+            productName: true,
+            productCode: true,
+          },
+        },
+        verificationCodes: {
+          select: {
+            id: true,
+            code: true,
+            isUsed: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return batches;
+  }
+
+  async findOneBatchForAdmin(batchId: string) {
+    console.log(`[BatchesService] findOneBatchForAdmin lookup id=${batchId}`);
+
+    const batch = await this.prisma.productBatch.findUnique({
+      where: { id: batchId },
+      include: {
+        product: {
+          select: {
+            id: true,
+            productName: true,
+            productCode: true,
+            category: true,
+            manufacturer: {
+              select: {
+                id: true,
+                companyName: true,
+                contactEmail: true,
+                contactPhone: true,
+              },
+            },
+          },
+        },
+        verificationCodes: {
+          select: {
+            id: true,
+            code: true,
+            qrImageUrl: true,
+            isUsed: true,
+            createdAt: true,
+            usedAt: true,
+            logs: {
+              select: {
+                id: true,
+                status: true,
+                location: true,
+                verifiedAt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!batch) {
+      console.log(`[BatchesService] findOneBatchForAdmin: no batch found for id=${batchId}`);
+      throw new NotFoundException('Batch not found');
+    }
+
+    console.log(`[BatchesService] findOneBatchForAdmin: found batch id=${batch.id} productId=${batch.productId}`);
+
+    return batch;
+  }
+  
+  async findOneBatchById(manufacturerId: string, batchId: string) {
+    const manufacturer = await this.prisma.manufacturer.findUnique({
+      where: { userId: manufacturerId },
+    });
+
+    if (!manufacturer) {
+      throw new NotFoundException('Manufacturer not found');
+    }
+
+    const batch = await this.prisma.productBatch.findUnique({
+      where: { id: batchId },
+      include: {
+        product: {
+          select: {
+            id: true,
+            productName: true,
+            productCode: true,
+            category: true,
+            manufacturer: {
+              select: {
+                id: true,
+                companyName: true,
+                contactEmail: true,
+                contactPhone: true,
+              },
+            },
+          },
+        },
+        verificationCodes: {
+          select: {
+            id: true,
+            code: true,
+            qrImageUrl: true,
+            isUsed: true,
+            createdAt: true,
+            usedAt: true,
+          },
+        },
+      },
+    });
+
+    if (!batch) {
+      throw new NotFoundException('Batch not found');
+    }
+
+    if (batch.product.manufacturer.id !== manufacturer.id) {
+      throw new ForbiddenException('Access denied to this batch');
+    }
+
+    return batch;
+  }
+
+  async verifyBatch(batchId: string, dto: { status: BatchStatus; notes?: string }) {
+    const batch = await this.prisma.productBatch.findUnique({
+      where: { id: batchId },
+    });
+
+    if (!batch) {
+      throw new NotFoundException('Batch not found');
+    }
+
+    const updatedBatch = await this.prisma.productBatch.update({
+      where: { id: batchId },
+      data: {
+        status: dto.status,
+        notes: dto.notes,
+        verifiedAt: dto.status !== 'PENDING' ? new Date() : null,
+      },
+      include: {
+        product: {
+          select: {
+            productName: true,
+          },
+        },
+      },
+    });
+
+    return updatedBatch;
+  }
+
+  async generateAndSaveBatchQRCode(batchId: string) {
+    const batch = await this.prisma.productBatch.findUnique({
+      where: { id: batchId },
+      include: {
+        product: {
+          select: {
+            id: true,
+            productName: true,
+            productCode: true,
+          },
+        },
+      },
+    });
+
+    if (!batch) {
+      throw new NotFoundException('Batch not found');
+    }
+
+    if (batch.status !== 'APPROVED') {
+      throw new BadRequestException('Batch must be approved before generating QR code');
+    }
+
+    // Get first verification code
+    const firstCode = await this.prisma.verificationCode.findFirst({
+      where: {
+        productBatchId: batchId,
+      },
+    });
+
+    if (!firstCode) {
+      throw new NotFoundException('No verification codes found for this batch');
+    }
+
+    // Generate QR code data
+    const qrData: QRCodeData = {
+      serialNumber: firstCode.code,
+      productId: batch.product.id,
+      batchId: batch.id,
+      productName: batch.product.productName,
+      batchNumber: batch.batchNumber,
+      manufactureDate: batch.manufactureDate.toISOString(),
+      expiryDate: batch.expiryDate.toISOString(),
+    };
+
+    // Generate QR code as data URL
+    const qrCodeBase64 = await this.generateQRCodeBase64(qrData);
+
+    // Save QR code URL to batch
+    const updatedBatch = await this.prisma.productBatch.update({
+      where: { id: batchId },
+      data: {
+        qrCodeUrl: qrCodeBase64,
+      },
+      include: {
+        product: {
+          select: {
+            productName: true,
+          },
+        },
+      },
+    });
+
+    return updatedBatch;
   }
 
   private async generateQRCodeBase64(data: QRCodeData): Promise<string> {

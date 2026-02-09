@@ -1,6 +1,6 @@
 export declare class CreateBatchDto {
     batchNumber: string;
-    manufactureDate: Date;
-    expiryDate: Date;
+    manufactureDate: string;
+    expiryDate: string;
     quantity: number;
 }

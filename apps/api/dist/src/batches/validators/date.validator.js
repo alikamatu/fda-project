@@ -12,7 +12,9 @@ let IsAfterConstraint = class IsAfterConstraint {
     validate(propertyValue, args) {
         const [relatedPropertyName] = args.constraints;
         const relatedValue = args.object[relatedPropertyName];
-        return new Date(propertyValue) > new Date(relatedValue);
+        const propertyDate = new Date(propertyValue);
+        const relatedDate = new Date(relatedValue);
+        return propertyDate > relatedDate;
     }
     defaultMessage(args) {
         return `$property must be after ${args.constraints[0]}`;

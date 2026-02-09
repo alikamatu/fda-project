@@ -16,9 +16,6 @@ class CreateProductDto {
     productName;
     description;
     category;
-    batchNumber;
-    expiryDate;
-    quantity;
 }
 exports.CreateProductDto = CreateProductDto;
 __decorate([
@@ -38,21 +35,4 @@ __decorate([
     (0, class_validator_1.IsEnum)(client_1.ProductCategory),
     __metadata("design:type", String)
 ], CreateProductDto.prototype, "category", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MaxLength)(50),
-    __metadata("design:type", String)
-], CreateProductDto.prototype, "batchNumber", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", String)
-], CreateProductDto.prototype, "expiryDate", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.Min)(1),
-    __metadata("design:type", Number)
-], CreateProductDto.prototype, "quantity", void 0);
 //# sourceMappingURL=create-product.dto.js.map

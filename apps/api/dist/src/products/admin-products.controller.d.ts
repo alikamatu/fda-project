@@ -36,10 +36,15 @@ export declare class AdminProductsController {
         batches: {
             id: string;
             createdAt: Date;
+            updatedAt: Date;
             batchNumber: string;
             manufactureDate: Date;
             expiryDate: Date;
             quantity: number;
+            status: import(".prisma/client").$Enums.BatchStatus;
+            notes: string | null;
+            qrCodeUrl: string | null;
+            verifiedAt: Date | null;
             productId: string;
         }[];
     } & {

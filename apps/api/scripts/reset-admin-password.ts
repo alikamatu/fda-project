@@ -13,7 +13,7 @@ const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 
 async function main() {
   const email = 'admin@fda.gov';
-  const newPassword = 'Admin1234';
+  const newPassword = 'Admin@1234';
   
   console.log(`Resetting password for ${email}...`);
 

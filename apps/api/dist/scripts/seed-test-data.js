@@ -12,7 +12,7 @@ const pool = new pg_1.Pool({ connectionString });
 const prisma = new client_1.PrismaClient({ adapter: new adapter_pg_1.PrismaPg(pool) });
 async function main() {
     console.log('Seeding test data...');
-    const adminPassword = await bcrypt.hash('Admin1234', 10);
+    const adminPassword = await bcrypt.hash('Admin@1234', 10);
     const admin = await prisma.user.create({
         data: {
             email: 'admin@fda.gov',

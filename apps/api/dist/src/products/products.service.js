@@ -33,36 +33,17 @@ let ProductsService = class ProductsService {
             throw new common_1.ForbiddenException('Manufacturer account is not active');
         }
         const productCode = await this.generateUniqueProductCode(dto.productName);
-        const result = await this.prisma.$transaction(async (tx) => {
-            const product = await tx.product.create({
-                data: {
-                    productName: dto.productName,
-                    productCode,
-                    description: dto.description,
-                    category: dto.category,
-                    manufacturerId: manufacturer.id,
-                    approvalStatus: client_1.ApprovalStatus.PENDING,
-                },
-            });
-            const batch = await tx.productBatch.create({
-                data: {
-                    batchNumber: dto.batchNumber,
-                    quantity: dto.quantity,
-                    expiryDate: new Date(dto.expiryDate),
-                    manufactureDate: new Date(),
-                    productId: product.id,
-                },
-            });
-            const codes = Array.from({ length: dto.quantity }).map(() => ({
-                code: this.generateVerificationCodeString(),
-                productBatchId: batch.id,
-            }));
-            await tx.verificationCode.createMany({
-                data: codes,
-            });
-            return product;
+        const product = await this.prisma.product.create({
+            data: {
+                productName: dto.productName,
+                productCode,
+                description: dto.description,
+                category: dto.category,
+                manufacturerId: manufacturer.id,
+                approvalStatus: client_1.ApprovalStatus.PENDING,
+            },
         });
-        return result;
+        return product;
     }
     async findAllProducts(manufacturerId) {
         const manufacturer = await this.prisma.manufacturer.findUnique({

@@ -42,7 +42,7 @@ function ActionCard({ title, description, icon, href, disabled }: ActionCardProp
   );
 }
 
-import { CubeIcon, PlusCircleIcon, DocumentCheckIcon } from '@heroicons/react/24/outline';
+import { CubeIcon, PlusCircleIcon, DocumentCheckIcon, QrCodeIcon } from '@heroicons/react/24/outline';
 
 interface QuickActionsProps {
   isApproved: boolean;
@@ -50,7 +50,7 @@ interface QuickActionsProps {
 
 export function QuickActions({ isApproved }: QuickActionsProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <ActionCard
         title="Register New Product"
         description="Add a new pharmaceutical product to the registry."
@@ -60,9 +60,16 @@ export function QuickActions({ isApproved }: QuickActionsProps) {
       />
       <ActionCard
         title="View My Products"
-        description="Manage your existing product catalog and batches."
+        description="Manage your existing product catalog."
         icon={<CubeIcon className="h-6 w-6" />}
         href="/manufacturer/products"
+        disabled={!isApproved}
+      />
+      <ActionCard
+        title="Create Batch"
+        description="Submit new product batches for FDA verification."
+        icon={<QrCodeIcon className="h-6 w-6" />}
+        href="/manufacturer/batches/new"
         disabled={!isApproved}
       />
        <ActionCard
@@ -75,3 +82,4 @@ export function QuickActions({ isApproved }: QuickActionsProps) {
     </div>
   );
 }
+

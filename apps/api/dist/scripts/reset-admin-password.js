@@ -12,7 +12,7 @@ const pool = new pg_1.Pool({ connectionString });
 const prisma = new client_1.PrismaClient({ adapter: new adapter_pg_1.PrismaPg(pool) });
 async function main() {
     const email = 'admin@fda.gov';
-    const newPassword = 'Admin1234';
+    const newPassword = 'Admin@1234';
     console.log(`Resetting password for ${email}...`);
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     try {

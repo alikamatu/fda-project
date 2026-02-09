@@ -2,10 +2,15 @@ import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments 
 
 @ValidatorConstraint({ name: 'isAfter', async: false })
 export class IsAfterConstraint implements ValidatorConstraintInterface {
-  validate(propertyValue: string, args: ValidationArguments) {
+  validate(propertyValue: any, args: ValidationArguments) {
     const [relatedPropertyName] = args.constraints;
     const relatedValue = (args.object as any)[relatedPropertyName];
-    return new Date(propertyValue) > new Date(relatedValue);
+    
+    // Convert to dates for comparison
+    const propertyDate = new Date(propertyValue);
+    const relatedDate = new Date(relatedValue);
+    
+    return propertyDate > relatedDate;
   }
 
   defaultMessage(args: ValidationArguments) {

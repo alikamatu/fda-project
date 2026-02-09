@@ -31,47 +31,19 @@ export class ProductsService {
     // Generate unique product code
     const productCode = await this.generateUniqueProductCode(dto.productName);
 
-    // Transaction to create product, batch, and verification codes
-    const result = await this.prisma.$transaction(async (tx) => {
-      // 1. Create Product
-      const product = await tx.product.create({
-        data: {
-          productName: dto.productName,
-          productCode,
-          description: dto.description,
-          category: dto.category,
-          manufacturerId: manufacturer.id,
-          approvalStatus: ApprovalStatus.PENDING,
-        },
-      });
-
-      // 2. Create Batch
-      const batch = await tx.productBatch.create({
-        data: {
-          batchNumber: dto.batchNumber,
-          quantity: dto.quantity,
-          expiryDate: new Date(dto.expiryDate),
-          manufactureDate: new Date(), // Default to today
-          productId: product.id,
-        },
-      });
-
-      // 3. Generate Verification Codes
-      // Generate a batch of unique codes.
-      // Note: In detailed production, we'd ensure uniqueness against DB or handle collisions.
-      const codes = Array.from({ length: dto.quantity }).map(() => ({
-        code: this.generateVerificationCodeString(),
-        productBatchId: batch.id,
-      }));
-
-      await tx.verificationCode.createMany({
-        data: codes,
-      });
-
-      return product;
+    // Create Product
+    const product = await this.prisma.product.create({
+      data: {
+        productName: dto.productName,
+        productCode,
+        description: dto.description,
+        category: dto.category,
+        manufacturerId: manufacturer.id,
+        approvalStatus: ApprovalStatus.PENDING,
+      },
     });
 
-    return result;
+    return product;
   }
 
   async findAllProducts(manufacturerId: string) {

@@ -16,17 +16,4 @@ export class CreateProductDto {
   @IsEnum(ProductCategory)
   category: ProductCategory;
 
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(50)
-  batchNumber: string;
-
-  @IsNotEmpty()
-  @IsDateString()
-  expiryDate: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(1)
-  quantity: number;
 }

@@ -33,6 +33,10 @@ let BatchesController = class BatchesController {
         const manufacturerId = req.user.id;
         return this.batchesService.findAllBatches(manufacturerId, productId);
     }
+    async getBatchById(req, batchId) {
+        const manufacturerId = req.user.id;
+        return this.batchesService.findOneBatchById(manufacturerId, batchId);
+    }
     async getBatch(req, productId, batchId) {
         const manufacturerId = req.user.id;
         return this.batchesService.findOneBatch(manufacturerId, productId, batchId);
@@ -60,6 +64,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], BatchesController.prototype, "getAllBatches", null);
+__decorate([
+    (0, common_1.Get)('by-id/:batchId'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('batchId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], BatchesController.prototype, "getBatchById", null);
 __decorate([
     (0, common_1.Get)(':batchId'),
     __param(0, (0, common_1.Request)()),

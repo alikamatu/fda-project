@@ -35,10 +35,15 @@ export declare class VerificationController {
             } & {
                 id: string;
                 createdAt: Date;
+                updatedAt: Date;
                 batchNumber: string;
                 manufactureDate: Date;
                 expiryDate: Date;
                 quantity: number;
+                status: import(".prisma/client").$Enums.BatchStatus;
+                notes: string | null;
+                qrCodeUrl: string | null;
+                verifiedAt: Date | null;
                 productId: string;
             };
         } & {
@@ -54,10 +59,10 @@ export declare class VerificationController {
         id: string;
         userId: string | null;
         status: import(".prisma/client").$Enums.VerificationStatus;
+        verifiedAt: Date;
         location: string | null;
         ipAddress: string | null;
         deviceInfo: string | null;
         verificationCodeId: string;
-        verifiedAt: Date;
     })[]>;
 }

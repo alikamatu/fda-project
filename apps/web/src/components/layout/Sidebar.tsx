@@ -22,6 +22,7 @@ const adminNavigation = [
   { name: 'Dashboard Overview', href: '/admin', icon: HomeIcon },
   { name: 'Verifications', href: '/admin/verifications', icon: DocumentCheckIcon },
   { name: 'Products', href: '/admin/products', icon: CubeIcon },
+  { name: 'Batches', href: '/admin/batches', icon: CubeIcon },
   { name: 'Manufacturers', href: '/admin/manufacturers', icon: BuildingOfficeIcon },
   { name: 'Users', href: '/admin/users', icon: UsersIcon },
   { name: 'Audit Logs', href: '/admin/audit-logs', icon: ClipboardDocumentListIcon },
@@ -32,6 +33,7 @@ const adminNavigation = [
 const manufacturerNavigation = [
   { name: 'Dashboard', href: '/manufacturer/dashboard', icon: HomeIcon },
   { name: 'My Products', href: '/manufacturer/products', icon: CubeIcon },
+  { name: 'Batches', href: '/manufacturer/batches', icon: CubeIcon },
   { name: 'Verifications', href: '/manufacturer/verifications', icon: DocumentCheckIcon },
   { name: 'Settings', href: '/admin/settings', icon: Cog6ToothIcon }, // Reuse settings for now
 ];

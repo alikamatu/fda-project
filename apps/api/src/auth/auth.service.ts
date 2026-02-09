@@ -130,6 +130,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    if (!user.isActive) {
+  console.warn('[AuthService] User account is inactive');
+  throw new ForbiddenException('Account is inactive. Please contact administrator.');
+}
+
     // Check if account is active
     console.log('[AuthService] User active status:', user.isActive);
     if (!user.isActive) {

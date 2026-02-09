@@ -28,6 +28,12 @@ export class BatchesController {
     return this.batchesService.findAllBatches(manufacturerId, productId);
   }
 
+  @Get('by-id/:batchId')
+  async getBatchById(@Request() req, @Param('batchId') batchId: string) {
+    const manufacturerId = req.user.id;
+    return this.batchesService.findOneBatchById(manufacturerId, batchId);
+  }
+
   @Get(':batchId')
   async getBatch(
     @Request() req,

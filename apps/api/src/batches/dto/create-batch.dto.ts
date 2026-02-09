@@ -9,12 +9,12 @@ export class CreateBatchDto {
 
   @IsNotEmpty()
   @IsDateString()
-  manufactureDate: Date;
+  manufactureDate: string;
 
   @IsNotEmpty()
   @IsDateString()
   @Validate(IsAfterConstraint, ['manufactureDate'])
-  expiryDate: Date;
+  expiryDate: string;
 
   @IsNotEmpty()
   @IsNumber()
