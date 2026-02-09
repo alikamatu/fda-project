@@ -31,9 +31,22 @@ interface ManufacturerRegisterResponse {
 
 export const AuthService = {
   async login(data: LoginRequest): Promise<AuthUser> {
-    const response = await apiClient.post<LoginResponse>('/auth/login', data);
-    tokenService.setToken(response.accessToken);
-    return response.user;
+    try {
+      console.log('[AuthService] Attempting login with:', { email: data.email });
+      const response = await apiClient.post<LoginResponse>('/auth/login', data);
+      console.log('[AuthService] Login response:', { 
+        hasAccessToken: !!response.accessToken,
+        user: response.user 
+      });
+      tokenService.setToken(response.accessToken);
+      console.log('[AuthService] Token set, stored token:', { 
+        token: tokenService.getToken() ? 'EXISTS' : 'MISSING' 
+      });
+      return response.user;
+    } catch (error) {
+      console.error('[AuthService] Login failed:', error);
+      throw error;
+    }
   },
 
   async registerUser(data: UserRegisterRequest): Promise<AuthUser> {
@@ -57,16 +70,17 @@ export const AuthService = {
 
   async getCurrentUser(): Promise<AuthUser | null> {
     if (!tokenService.isAuthenticated()) {
+      console.log('[AuthService] No token, returning null');
       return null;
     }
+
     try {
-      return await apiClient.get<AuthUser>('/auth/me');
+      console.log('[AuthService] Fetching current user');
+      const user = await apiClient.get<AuthUser>('/auth/me');
+      console.log('[AuthService] Got user:', user);
+      return user;
     } catch (error) {
-      // Only remove token if it's actually invalid (401 Unauthorized)
-      // Don't remove token on other errors (network, server errors, etc)
-      if (error instanceof Error && 'status' in error && (error as any).status === 401) {
-        tokenService.removeToken();
-      }
+      console.error('[AuthService] Failed to get user:', error);
       return null;
     }
   },

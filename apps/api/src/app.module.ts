@@ -9,6 +9,8 @@ import { ConfigModule } from '@nestjs/config/dist/config.module';
 import { ProductsModule } from './products/products.module';
 import { BatchesModule } from './batches/batches.module';
 import { VerificationModule } from './verification/verification.module';
+import { ProfileModule } from './profile/profile.module';
+import { ManufacturerModule } from './manufacturer/manufacturer.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { VerificationModule } from './verification/verification.module';
     ProductsModule,
     BatchesModule,
     VerificationModule,
+    ProfileModule,
+    ManufacturerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

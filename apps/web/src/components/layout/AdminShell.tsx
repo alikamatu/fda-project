@@ -49,9 +49,17 @@ export function AdminShell({ children }: AdminShellProps) {
           }
         }, 2000);
         return () => clearTimeout(timer);
-      } else if (user.role !== 'ADMIN') {
-        // User exists but is not admin
-        router.push(APP_ROUTES.VERIFY);
+      } else {
+        // Role-based redirection
+        if (user.role === 'CONSUMER') {
+          router.push(APP_ROUTES.VERIFY);
+        } else if (user.role === 'ADMIN' && window.location.pathname.startsWith('/manufacturer')) {
+          router.push('/admin');
+        } else if (user.role === 'MANUFACTURER' && window.location.pathname.startsWith('/admin') && !window.location.pathname.startsWith('/admin/settings')) {
+           // Allow settings for now, or redirect to dashboard
+           // For now, let's redirect to dashboard if they try to access admin-only pages
+           router.push('/manufacturer/dashboard');
+        }
       }
     }
   }, [user, isLoading, router]);

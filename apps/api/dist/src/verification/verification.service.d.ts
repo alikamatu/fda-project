@@ -33,10 +33,10 @@ export declare class VerificationService {
                     createdAt: Date;
                     updatedAt: Date;
                     productName: string;
+                    productCode: string;
                     description: string | null;
                     category: import(".prisma/client").$Enums.ProductCategory;
                     approvalStatus: import(".prisma/client").$Enums.ApprovalStatus;
-                    productCode: string;
                     manufacturerId: string;
                 };
             } & {
@@ -94,10 +94,10 @@ export declare class VerificationService {
                         createdAt: Date;
                         updatedAt: Date;
                         productName: string;
+                        productCode: string;
                         description: string | null;
                         category: import(".prisma/client").$Enums.ProductCategory;
                         approvalStatus: import(".prisma/client").$Enums.ApprovalStatus;
-                        productCode: string;
                         manufacturerId: string;
                     };
                 } & {
@@ -136,8 +136,8 @@ export declare class VerificationService {
     getVerificationDetailsForAdmin(verificationId: string): Promise<{
         user: {
             id: string;
-            fullName: string;
             email: string;
+            fullName: string;
             role: import(".prisma/client").$Enums.UserRole;
         } | null;
         verificationCode: {
@@ -155,10 +155,10 @@ export declare class VerificationService {
                     createdAt: Date;
                     updatedAt: Date;
                     productName: string;
+                    productCode: string;
                     description: string | null;
                     category: import(".prisma/client").$Enums.ProductCategory;
                     approvalStatus: import(".prisma/client").$Enums.ApprovalStatus;
-                    productCode: string;
                     manufacturerId: string;
                 };
             } & {

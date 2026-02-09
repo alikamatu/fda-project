@@ -1,108 +1,144 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1000';
+import { tokenService } from '@/services/token.service';
 
-export class ApiError extends Error {
-  constructor(
-    public status: number,
-    message: string,
-    public code?: string
-  ) {
-    super(message);
-    this.name = 'ApiError';
-  }
+interface RequestInit extends globalThis.RequestInit {
+  headers?: HeadersInit;
 }
 
-interface RequestConfig extends Omit<RequestInit, 'body'> {
-  body?: unknown;
-}
+type UnauthorizedHandler = (status: number, message?: string) => void;
 
 class ApiClient {
   private baseUrl: string;
+  private unauthorizedHandler?: UnauthorizedHandler;
 
-  constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
+  constructor() {
+    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1000';
   }
 
-  private unauthorizedHandler: ((status: number, message?: string) => void) | null = null;
-
-  setUnauthorizedHandler(handler: (status: number, message?: string) => void) {
-    this.unauthorizedHandler = handler;
-  }
-
-  private getToken(): string | null {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('auth_token');
-  }
-
-  private async request<T>(endpoint: string, config: RequestConfig = {}): Promise<T> {
-    const { body, headers: customHeaders, ...restConfig } = config;
+  private getHeaders(headers?: HeadersInit): HeadersInit {
+    const token = tokenService.getToken();
     
-    const token = this.getToken();
-    const headers: HeadersInit = {
+    const defaultHeaders: HeadersInit = {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      ...customHeaders,
     };
 
-    // Only add Authorization header if token exists
+    // Add Authorization header if token exists
     if (token) {
-      (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+      (defaultHeaders as any)['Authorization'] = `Bearer ${token}`;
     }
 
-    // DEBUG: log token/header for troubleshooting auth issues in browser
-    if (typeof window !== 'undefined') {
-      // eslint-disable-next-line no-console
-      console.debug('[apiClient] token:', token ? token.substring(0, 20) + '...' : 'null');
-      // eslint-disable-next-line no-console
-      console.debug('[apiClient] Authorization header:', (headers as Record<string, string>)['Authorization'] || 'not set');
+    return {
+      ...defaultHeaders,
+      ...headers,
+    };
+  }
+
+  private async handleResponse<T>(response: Response): Promise<T> {
+    // Handle 401 Unauthorized
+    if (response.status === 401) {
+      const message = `Unauthorized (401)`;
+      this.unauthorizedHandler?.(response.status, message);
+      throw new Error(message);
     }
 
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      ...restConfig,
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
+    // Handle 403 Forbidden
+    if (response.status === 403) {
+      const message = `Forbidden (403)`;
+      this.unauthorizedHandler?.(response.status, message);
+      throw new Error(message);
+    }
+
+    // Handle other error statuses
+    if (!response.ok) {
+      let message = `HTTP Error ${response.status}`;
+      try {
+        const error = await response.json();
+        message = error.message || message;
+      } catch {
+        // Response wasn't JSON
+      }
+      throw new Error(message);
+    }
+
+    // Handle 204 No Content
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    // Parse JSON response
+    try {
+      return await response.json();
+    } catch {
+      throw new Error('Failed to parse response');
+    }
+  }
+
+  async request<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
+    const url = `${this.baseUrl}${endpoint}`;
+    
+    const config: RequestInit = {
+      ...options,
+      headers: this.getHeaders(options.headers),
+      credentials: 'include', // Include cookies for CORS
+    };
+
+    console.log(`[ApiClient] ${config.method || 'GET'} ${endpoint}`, {
+      hasToken: !!tokenService.getToken(),
+      headers: config.headers,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        message: 'An unexpected error occurred',
-      }));
-
-      // Handle unauthorized/forbidden errors globally before throwing
-      if (response.status === 401 || response.status === 403) {
-        if (this.unauthorizedHandler) {
-          this.unauthorizedHandler(response.status, errorData.message);
-        }
-      }
-
-      throw new ApiError(
-        response.status,
-        errorData.message || 'Request failed',
-        errorData.code
-      );
+    try {
+      const response = await fetch(url, config);
+      return this.handleResponse<T>(response);
+    } catch (error) {
+      console.error(`[ApiClient] Request failed: ${endpoint}`, error);
+      throw error;
     }
-
-    if (response.status === 204) {
-      return null as T;
-    }
-
-    return response.json();
   }
 
-  get<T>(endpoint: string, config?: RequestConfig): Promise<T> {
-    return this.request<T>(endpoint, { ...config, method: 'GET' });
+  get<T>(endpoint: string, options?: RequestInit): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'GET',
+    });
   }
 
-  post<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<T> {
-    return this.request<T>(endpoint, { ...config, method: 'POST', body: data });
+  post<T>(endpoint: string, body?: any, options?: RequestInit): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'POST',
+      body: body ? JSON.stringify(body) : undefined,
+    });
   }
 
-  put<T>(endpoint: string, data?: unknown, config?: RequestConfig): Promise<T> {
-    return this.request<T>(endpoint, { ...config, method: 'PUT', body: data });
+  put<T>(endpoint: string, body?: any, options?: RequestInit): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'PUT',
+      body: body ? JSON.stringify(body) : undefined,
+    });
   }
 
-  delete<T>(endpoint: string, config?: RequestConfig): Promise<T> {
-    return this.request<T>(endpoint, { ...config, method: 'DELETE' });
+  patch<T>(endpoint: string, body?: any, options?: RequestInit): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'PATCH',
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  }
+
+  delete<T>(endpoint: string, options?: RequestInit): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'DELETE',
+    });
+  }
+
+  setUnauthorizedHandler(handler: UnauthorizedHandler): void {
+    this.unauthorizedHandler = handler;
   }
 }
 
-export const apiClient = new ApiClient(API_BASE_URL);
+export const apiClient = new ApiClient();

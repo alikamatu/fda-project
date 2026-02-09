@@ -1,94 +1,96 @@
-import { fetcher } from '@/lib/fetcher';
-import { API_ROUTES } from '@/lib/routes';
-import {
-  PaginatedManufacturers,
-  ManufacturerWithUser,
-  ManufacturerReviewRequest,
-  ManufacturerFilters,
-  ApiResponse,
-} from '@/types/manufacturer';
+import { apiClient } from '@/lib/api-client';
 
-export class ManufacturerService {
-  static async getManufacturers(
-    filters: ManufacturerFilters = {},
-    page: number = 1,
-    limit: number = 20
-  ): Promise<PaginatedManufacturers> {
-    const params = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-      ...(filters.search && { search: filters.search }),
-      ...(filters.status && { status: filters.status }),
-      ...(filters.sortBy && { sortBy: filters.sortBy }),
-      ...(filters.sortOrder && { sortOrder: filters.sortOrder }),
-    });
-
-    const response = await fetcher<ApiResponse<PaginatedManufacturers>>(
-      `${API_ROUTES.MANUFACTURERS.LIST}?${params}`
-    );
-
-    if (!response.success || !response.data) {
-      throw new Error(response.error || 'Failed to fetch manufacturers');
-    }
-
-    return response.data;
-  }
-
-  static async getManufacturer(id: string): Promise<ManufacturerWithUser> {
-    const response = await fetcher<ApiResponse<ManufacturerWithUser>>(
-      `${API_ROUTES.MANUFACTURERS.GET}/${id}`
-    );
-
-    if (!response.success || !response.data) {
-      throw new Error(response.error || 'Failed to fetch manufacturer');
-    }
-
-    return response.data;
-  }
-
-  static async approveManufacturer(
-    manufacturerId: string,
-    data?: Partial<ManufacturerReviewRequest>
-  ): Promise<void> {
-    const response = await fetcher<ApiResponse>(
-      `${API_ROUTES.MANUFACTURERS.APPROVE}/${manufacturerId}`,
-      {
-        method: 'POST',
-        body: JSON.stringify(data || {}),
-      }
-    );
-
-    if (!response.success) {
-      throw new Error(response.error || 'Failed to approve manufacturer');
-    }
-  }
-
-  static async rejectManufacturer(
-    manufacturerId: string,
-    data: ManufacturerReviewRequest
-  ): Promise<void> {
-    const response = await fetcher<ApiResponse>(
-      `${API_ROUTES.MANUFACTURERS.REJECT}/${manufacturerId}`,
-      {
-        method: 'POST',
-        body: JSON.stringify(data),
-      }
-    );
-
-    if (!response.success) {
-      throw new Error(response.error || 'Failed to reject manufacturer');
-    }
-  }
-
-  static async getAuditLogs(manufacturerId: string): Promise<any[]> {
-    const response = await fetcher<ApiResponse<any[]>>(
-      `${API_ROUTES.MANUFACTURERS.AUDIT_LOGS}/${manufacturerId}`
-    );
-
-    if (!response.success) {
-      throw new Error(response.error || 'Failed to fetch audit logs');
-    }
-
-    return response.data || [];
-  }
+export interface DashboardStats {
+  isApproved: boolean;
+  totalProducts: number;
+  activeProducts: number;
+  totalVerifications: number;
+  recentVerificationsCount: number;
 }
+
+export interface RecentProduct {
+  id: string;
+  productName: string;
+  productCode: string;
+  approvalStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
+  createdAt: string;
+  _count: {
+    batches: number;
+  };
+}
+
+export interface RecentVerification {
+  id: string;
+  status: 'VALID' | 'EXPIRED' | 'FAKE' | 'USED';
+  verifiedAt: string;
+  location?: string;
+  verificationCode: {
+    code: string;
+    productBatch: {
+      batchNumber: string;
+      product: {
+        productName: string;
+      };
+    };
+  };
+}
+
+export interface VerificationLog {
+  id: string;
+  status: 'VALID' | 'EXPIRED' | 'FAKE' | 'USED';
+  verifiedAt: string;
+  location?: string;
+  verificationCode: {
+    code: string;
+    productBatch: {
+      batchNumber: string;
+      product: {
+        productName: string;
+        productCode: string;
+      };
+    };
+  };
+}
+
+export interface GetVerificationsParams {
+  page?: number;
+  limit?: number;
+  status?: string;
+  productId?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface VerificationLogResponse {
+  data: VerificationLog[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export const ManufacturerService = {
+  getDashboardStats: async (): Promise<DashboardStats> => {
+    return apiClient.get('/manufacturer/dashboard');
+  },
+
+  getRecentProducts: async (limit: number = 5): Promise<RecentProduct[]> => {
+    return apiClient.get(`/manufacturer/products/recent?limit=${limit}`);
+  },
+
+  getRecentVerifications: async (limit: number = 10): Promise<RecentVerification[]> => {
+    return apiClient.get(`/manufacturer/verifications/recent?limit=${limit}`);
+  },
+
+  getVerifications: async (params: GetVerificationsParams): Promise<VerificationLogResponse> => {
+    const query = new URLSearchParams();
+    if (params.page) query.append('page', params.page.toString());
+    if (params.limit) query.append('limit', params.limit.toString());
+    if (params.status) query.append('status', params.status);
+    if (params.productId) query.append('productId', params.productId);
+    if (params.startDate) query.append('startDate', params.startDate);
+    if (params.endDate) query.append('endDate', params.endDate);
+    
+    return apiClient.get(`/manufacturer/verifications?${query.toString()}`);
+  },
+};

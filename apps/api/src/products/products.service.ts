@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product, ApprovalStatus } from '@prisma/client';
+import * as crypto from 'crypto'; // Reserved for future strong randomness if needed
 
 @Injectable()
 export class ProductsService {
@@ -30,27 +31,47 @@ export class ProductsService {
     // Generate unique product code
     const productCode = await this.generateUniqueProductCode(dto.productName);
 
-    // Create product
-    const product = await this.prisma.product.create({
-      data: {
-        productName: dto.productName,
-        productCode,
-        description: dto.description,
-        category: dto.category,
-        manufacturerId: manufacturer.id,
-        approvalStatus: ApprovalStatus.PENDING,
-      },
-      include: {
-        manufacturer: {
-          select: {
-            companyName: true,
-            registrationNumber: true,
-          },
+    // Transaction to create product, batch, and verification codes
+    const result = await this.prisma.$transaction(async (tx) => {
+      // 1. Create Product
+      const product = await tx.product.create({
+        data: {
+          productName: dto.productName,
+          productCode,
+          description: dto.description,
+          category: dto.category,
+          manufacturerId: manufacturer.id,
+          approvalStatus: ApprovalStatus.PENDING,
         },
-      },
+      });
+
+      // 2. Create Batch
+      const batch = await tx.productBatch.create({
+        data: {
+          batchNumber: dto.batchNumber,
+          quantity: dto.quantity,
+          expiryDate: new Date(dto.expiryDate),
+          manufactureDate: new Date(), // Default to today
+          productId: product.id,
+        },
+      });
+
+      // 3. Generate Verification Codes
+      // Generate a batch of unique codes.
+      // Note: In detailed production, we'd ensure uniqueness against DB or handle collisions.
+      const codes = Array.from({ length: dto.quantity }).map(() => ({
+        code: this.generateVerificationCodeString(),
+        productBatchId: batch.id,
+      }));
+
+      await tx.verificationCode.createMany({
+        data: codes,
+      });
+
+      return product;
     });
 
-    return product;
+    return result;
   }
 
   async findAllProducts(manufacturerId: string) {
@@ -182,6 +203,95 @@ export class ProductsService {
     return updatedProduct;
   }
 
+  // Admin Methods
+
+  async findAllAdmin(query: any) {
+    const { status, limit = 10, page = 1 } = query;
+    console.log('findAllAdmin query:', query);
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
+    if (status) {
+      where.approvalStatus = status;
+    }
+    console.log('findAllAdmin where:', where);
+
+    const [products, total] = await Promise.all([
+      this.prisma.product.findMany({
+        where,
+        take: Number(limit),
+        skip: Number(skip),
+        orderBy: { createdAt: 'desc' },
+        include: {
+          manufacturer: {
+            select: {
+              companyName: true,
+            },
+          },
+          _count: {
+            select: { batches: true },
+          },
+        },
+      }),
+      this.prisma.product.count({ where }),
+    ]);
+
+    return {
+      data: products,
+      total,
+      page: Number(page),
+      limit: Number(limit),
+      totalPages: Math.ceil(total / Number(limit)),
+    };
+  }
+
+  async findOneAdmin(id: string) {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+      include: {
+        manufacturer: {
+          select: {
+            companyName: true,
+            registrationNumber: true,
+            contactEmail: true,
+            contactPhone: true,
+          },
+        },
+        batches: {
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return product;
+  }
+
+  async approveProduct(id: string) {
+    const product = await this.prisma.product.findUnique({ where: { id } });
+    if (!product) throw new NotFoundException('Product not found');
+
+    return this.prisma.product.update({
+      where: { id },
+      data: { approvalStatus: ApprovalStatus.APPROVED },
+    });
+  }
+
+  async rejectProduct(id: string, reason?: string) {
+    const product = await this.prisma.product.findUnique({ where: { id } });
+    if (!product) throw new NotFoundException('Product not found');
+
+    // Currently we don't store rejection reason in schema, but we could add it.
+    // For now just update status.
+    return this.prisma.product.update({
+      where: { id },
+      data: { approvalStatus: ApprovalStatus.REJECTED },
+    });
+  }
+
   private async generateUniqueProductCode(productName: string): Promise<string> {
     const baseCode = productName
       .toUpperCase()
@@ -204,5 +314,17 @@ export class ProductsService {
       where: { productCode },
     });
     return !!existing;
+  }
+
+  private generateVerificationCodeString(): string {
+    // Generate a secure random string (e.g., alphanumeric 12 chars)
+    // Format: XXXX-XXXX-XXXX
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < 12; i++) {
+        if (i > 0 && i % 4 === 0) result += '-';
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
   }
 }

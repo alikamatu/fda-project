@@ -29,40 +29,50 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
         this.prisma = prisma;
     }
     async validate(payload) {
+        console.log('[JwtStrategy] Validating JWT:', {
+            sub: payload.sub,
+            email: payload.email,
+            role: payload.role,
+        });
+        if (!payload.sub) {
+            console.error('[JwtStrategy] No sub in payload');
+            return null;
+        }
         try {
-            console.log('[JwtStrategy] Validating JWT payload:', { sub: payload.sub, email: payload.email, role: payload.role });
-            if (!payload.sub) {
-                console.error('[JwtStrategy] JWT payload missing sub (user ID)');
-                throw new Error('JWT payload missing sub (user ID)');
-            }
             const user = await this.prisma.user.findUnique({
                 where: { id: payload.sub },
                 select: {
                     id: true,
                     email: true,
+                    fullName: true,
                     role: true,
                     isActive: true,
                 },
             });
             if (!user) {
-                console.error('[JwtStrategy] User not found for ID:', payload.sub);
-                throw new Error('User not found');
+                console.error('[JwtStrategy] User not found:', payload.sub);
+                return null;
             }
             if (!user.isActive) {
-                console.error('[JwtStrategy] User account is inactive:', user.email);
-                throw new Error('User account is inactive');
+                console.error('[JwtStrategy] User inactive:', user.email);
+                return null;
             }
-            console.log('[JwtStrategy] JWT validation successful:', { userId: user.id, email: user.email, role: user.role });
+            console.log('[JwtStrategy] Validation successful:', {
+                userId: user.id,
+                email: user.email,
+                role: user.role,
+            });
             return {
                 userId: user.id,
                 id: user.id,
                 email: user.email,
+                fullName: user.fullName,
                 role: user.role,
             };
         }
         catch (error) {
-            console.error('[JwtStrategy] Validation error:', error.message);
-            throw error;
+            console.error('[JwtStrategy] Error:', error);
+            return null;
         }
     }
 };

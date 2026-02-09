@@ -122,18 +122,27 @@ export class AuthService {
       where: { email: dto.email },
     });
 
+    console.log('[AuthService] Login attempt for:', dto.email);
+    console.log('[AuthService] User found:', !!user);
+
     if (!user) {
+      console.warn('[AuthService] User not found in database');
       throw new UnauthorizedException('Invalid credentials');
     }
 
     // Check if account is active
+    console.log('[AuthService] User active status:', user.isActive);
     if (!user.isActive) {
+      console.warn('[AuthService] User account is inactive');
       throw new ForbiddenException('Account is inactive. Please contact administrator.');
     }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(dto.password, user.passwordHash);
+    console.log('[AuthService] Password valid:', isPasswordValid);
+    
     if (!isPasswordValid) {
+      console.warn('[AuthService] Password validation failed');
       throw new UnauthorizedException('Invalid credentials');
     }
 

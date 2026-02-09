@@ -5,19 +5,14 @@ export declare class ProductsController {
     private readonly productsService;
     constructor(productsService: ProductsService);
     createProduct(req: any, createProductDto: CreateProductDto): Promise<{
-        manufacturer: {
-            companyName: string;
-            registrationNumber: string;
-        };
-    } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
         productName: string;
+        productCode: string;
         description: string | null;
         category: import(".prisma/client").$Enums.ProductCategory;
         approvalStatus: import(".prisma/client").$Enums.ApprovalStatus;
-        productCode: string;
         manufacturerId: string;
     }>;
     getAllProducts(req: any): Promise<({
@@ -33,10 +28,10 @@ export declare class ProductsController {
         createdAt: Date;
         updatedAt: Date;
         productName: string;
+        productCode: string;
         description: string | null;
         category: import(".prisma/client").$Enums.ProductCategory;
         approvalStatus: import(".prisma/client").$Enums.ApprovalStatus;
-        productCode: string;
         manufacturerId: string;
     })[]>;
     getProduct(req: any, productId: string): Promise<{
@@ -65,10 +60,10 @@ export declare class ProductsController {
         createdAt: Date;
         updatedAt: Date;
         productName: string;
+        productCode: string;
         description: string | null;
         category: import(".prisma/client").$Enums.ProductCategory;
         approvalStatus: import(".prisma/client").$Enums.ApprovalStatus;
-        productCode: string;
         manufacturerId: string;
     }>;
     updateProduct(req: any, productId: string, updateProductDto: UpdateProductDto): Promise<{
@@ -76,10 +71,10 @@ export declare class ProductsController {
         createdAt: Date;
         updatedAt: Date;
         productName: string;
+        productCode: string;
         description: string | null;
         category: import(".prisma/client").$Enums.ProductCategory;
         approvalStatus: import(".prisma/client").$Enums.ApprovalStatus;
-        productCode: string;
         manufacturerId: string;
     }>;
 }

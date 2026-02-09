@@ -47,8 +47,8 @@ export declare class BatchesService {
                 id: string;
                 user: {
                     id: string;
-                    fullName: string;
                     email: string;
+                    fullName: string;
                 } | null;
                 status: import(".prisma/client").$Enums.VerificationStatus;
                 location: string | null;

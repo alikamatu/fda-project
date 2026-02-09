@@ -33,25 +33,36 @@ let ProductsService = class ProductsService {
             throw new common_1.ForbiddenException('Manufacturer account is not active');
         }
         const productCode = await this.generateUniqueProductCode(dto.productName);
-        const product = await this.prisma.product.create({
-            data: {
-                productName: dto.productName,
-                productCode,
-                description: dto.description,
-                category: dto.category,
-                manufacturerId: manufacturer.id,
-                approvalStatus: client_1.ApprovalStatus.PENDING,
-            },
-            include: {
-                manufacturer: {
-                    select: {
-                        companyName: true,
-                        registrationNumber: true,
-                    },
+        const result = await this.prisma.$transaction(async (tx) => {
+            const product = await tx.product.create({
+                data: {
+                    productName: dto.productName,
+                    productCode,
+                    description: dto.description,
+                    category: dto.category,
+                    manufacturerId: manufacturer.id,
+                    approvalStatus: client_1.ApprovalStatus.PENDING,
                 },
-            },
+            });
+            const batch = await tx.productBatch.create({
+                data: {
+                    batchNumber: dto.batchNumber,
+                    quantity: dto.quantity,
+                    expiryDate: new Date(dto.expiryDate),
+                    manufactureDate: new Date(),
+                    productId: product.id,
+                },
+            });
+            const codes = Array.from({ length: dto.quantity }).map(() => ({
+                code: this.generateVerificationCodeString(),
+                productBatchId: batch.id,
+            }));
+            await tx.verificationCode.createMany({
+                data: codes,
+            });
+            return product;
         });
-        return product;
+        return result;
     }
     async findAllProducts(manufacturerId) {
         const manufacturer = await this.prisma.manufacturer.findUnique({
@@ -160,6 +171,82 @@ let ProductsService = class ProductsService {
         });
         return updatedProduct;
     }
+    async findAllAdmin(query) {
+        const { status, limit = 10, page = 1 } = query;
+        console.log('findAllAdmin query:', query);
+        const skip = (page - 1) * limit;
+        const where = {};
+        if (status) {
+            where.approvalStatus = status;
+        }
+        console.log('findAllAdmin where:', where);
+        const [products, total] = await Promise.all([
+            this.prisma.product.findMany({
+                where,
+                take: Number(limit),
+                skip: Number(skip),
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    manufacturer: {
+                        select: {
+                            companyName: true,
+                        },
+                    },
+                    _count: {
+                        select: { batches: true },
+                    },
+                },
+            }),
+            this.prisma.product.count({ where }),
+        ]);
+        return {
+            data: products,
+            total,
+            page: Number(page),
+            limit: Number(limit),
+            totalPages: Math.ceil(total / Number(limit)),
+        };
+    }
+    async findOneAdmin(id) {
+        const product = await this.prisma.product.findUnique({
+            where: { id },
+            include: {
+                manufacturer: {
+                    select: {
+                        companyName: true,
+                        registrationNumber: true,
+                        contactEmail: true,
+                        contactPhone: true,
+                    },
+                },
+                batches: {
+                    orderBy: { createdAt: 'desc' },
+                },
+            },
+        });
+        if (!product) {
+            throw new common_1.NotFoundException('Product not found');
+        }
+        return product;
+    }
+    async approveProduct(id) {
+        const product = await this.prisma.product.findUnique({ where: { id } });
+        if (!product)
+            throw new common_1.NotFoundException('Product not found');
+        return this.prisma.product.update({
+            where: { id },
+            data: { approvalStatus: client_1.ApprovalStatus.APPROVED },
+        });
+    }
+    async rejectProduct(id, reason) {
+        const product = await this.prisma.product.findUnique({ where: { id } });
+        if (!product)
+            throw new common_1.NotFoundException('Product not found');
+        return this.prisma.product.update({
+            where: { id },
+            data: { approvalStatus: client_1.ApprovalStatus.REJECTED },
+        });
+    }
     async generateUniqueProductCode(productName) {
         const baseCode = productName
             .toUpperCase()
@@ -178,6 +265,16 @@ let ProductsService = class ProductsService {
             where: { productCode },
         });
         return !!existing;
+    }
+    generateVerificationCodeString() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let result = '';
+        for (let i = 0; i < 12; i++) {
+            if (i > 0 && i % 4 === 0)
+                result += '-';
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
     }
 };
 exports.ProductsService = ProductsService;

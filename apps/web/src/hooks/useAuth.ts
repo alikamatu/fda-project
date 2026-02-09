@@ -37,6 +37,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: (data: LoginRequest) => AuthService.login(data),
     onSuccess: (user: AuthUser) => {
+      console.log('[useLogin] Login successful:', { user });
       setUser(user);
       queryClient.setQueryData(AUTH_QUERY_KEY, user);
 
@@ -51,6 +52,12 @@ export function useLogin() {
         default:
           router.push(APP_ROUTES.VERIFY);
       }
+    },
+    onError: (error: Error) => {
+      console.error('[useLogin] Login failed:', {
+        error: error.message,
+        stack: error.stack,
+      });
     },
   });
 }

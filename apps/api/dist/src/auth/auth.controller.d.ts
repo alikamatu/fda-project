@@ -7,8 +7,8 @@ export declare class AuthController {
     constructor(authService: AuthService);
     registerUser(dto: RegisterUserDto): Promise<{
         id: string;
-        fullName: string;
         email: string;
+        fullName: string;
         role: import(".prisma/client").$Enums.UserRole;
         isActive: boolean;
         createdAt: Date;

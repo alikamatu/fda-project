@@ -15,7 +15,10 @@ import {
 } from '@heroicons/react/24/outline';
 import { useLogout } from '@/hooks/useAuth';
 
-const navigation = [
+import { useCurrentUser } from '@/hooks/useAuth';
+import { UserRole } from '@/types/auth';
+
+const adminNavigation = [
   { name: 'Dashboard Overview', href: '/admin', icon: HomeIcon },
   { name: 'Verifications', href: '/admin/verifications', icon: DocumentCheckIcon },
   { name: 'Products', href: '/admin/products', icon: CubeIcon },
@@ -26,6 +29,13 @@ const navigation = [
   { name: 'Settings', href: '/admin/settings', icon: Cog6ToothIcon },
 ];
 
+const manufacturerNavigation = [
+  { name: 'Dashboard', href: '/manufacturer/dashboard', icon: HomeIcon },
+  { name: 'My Products', href: '/manufacturer/products', icon: CubeIcon },
+  { name: 'Verifications', href: '/manufacturer/verifications', icon: DocumentCheckIcon },
+  { name: 'Settings', href: '/admin/settings', icon: Cog6ToothIcon }, // Reuse settings for now
+];
+
 interface SidebarProps {
   onClose?: () => void;
 }
@@ -33,17 +43,28 @@ interface SidebarProps {
 export function Sidebar({ onClose }: SidebarProps) {
   const pathname = usePathname();
   const { mutate: logout } = useLogout();
+  const { data: user } = useCurrentUser();
+
+  const navigation = user?.role === UserRole.MANUFACTURER 
+    ? manufacturerNavigation 
+    : adminNavigation;
 
   return (
     <div className="flex h-full flex-col bg-white border-r border-gray-200">
       {/* Logo */}
       <div className="flex h-16 shrink-0 items-center border-b border-gray-200 px-6">
-        <Link href="/admin" className="flex items-center gap-2" onClick={onClose}>
+        <Link 
+          href={user?.role === UserRole.MANUFACTURER ? '/manufacturer/dashboard' : '/admin'} 
+          className="flex items-center gap-2" 
+          onClick={onClose}
+        >
           <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
             <span className="text-xs font-semibold text-white">FDA</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-gray-900">Admin</span>
+            <span className="text-sm font-semibold text-gray-900">
+              {user?.role === UserRole.MANUFACTURER ? 'Manufacturer' : 'Admin'}
+            </span>
             <span className="text-[10px] text-gray-500">Verification System</span>
           </div>
         </Link>
@@ -53,7 +74,7 @@ export function Sidebar({ onClose }: SidebarProps) {
       <nav className="flex-1 space-y-1 px-4 py-6" aria-label="Sidebar">
         {navigation.map((item) => {
           const isActive = pathname === item.href || 
-                          (item.href !== '/admin' && pathname.startsWith(item.href));
+                          (item.href !== '/admin' && item.href !== '/manufacturer/dashboard' && pathname.startsWith(item.href));
           
           return (
             <Link

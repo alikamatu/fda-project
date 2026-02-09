@@ -26,10 +26,10 @@ export declare class VerificationController {
                     createdAt: Date;
                     updatedAt: Date;
                     productName: string;
+                    productCode: string;
                     description: string | null;
                     category: import(".prisma/client").$Enums.ProductCategory;
                     approvalStatus: import(".prisma/client").$Enums.ApprovalStatus;
-                    productCode: string;
                     manufacturerId: string;
                 };
             } & {

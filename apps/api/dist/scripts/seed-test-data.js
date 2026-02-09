@@ -12,7 +12,7 @@ const pool = new pg_1.Pool({ connectionString });
 const prisma = new client_1.PrismaClient({ adapter: new adapter_pg_1.PrismaPg(pool) });
 async function main() {
     console.log('Seeding test data...');
-    const adminPassword = await bcrypt.hash('admin123', 10);
+    const adminPassword = await bcrypt.hash('Admin1234', 10);
     const admin = await prisma.user.create({
         data: {
             email: 'admin@fda.gov',
@@ -22,7 +22,7 @@ async function main() {
             isActive: true,
         },
     });
-    const manufacturerPassword = await bcrypt.hash('manufacturer123', 10);
+    const manufacturerPassword = await bcrypt.hash('Manufacturer1234', 10);
     const manufacturerUser = await prisma.user.create({
         data: {
             email: 'manufacturer@pharma.com',
@@ -42,7 +42,7 @@ async function main() {
             isApproved: true,
         },
     });
-    const consumerPassword = await bcrypt.hash('consumer123', 10);
+    const consumerPassword = await bcrypt.hash('Consumer1234', 10);
     const consumer = await prisma.user.create({
         data: {
             email: 'consumer@example.com',
@@ -52,10 +52,26 @@ async function main() {
             isActive: true,
         },
     });
+    const productBatch = await prisma.productBatch.create({
+        data: {
+            batchNumber: 'BATCH-001',
+            quantity: 1000,
+            manufactureDate: new Date('2024-01-01'),
+            expiryDate: new Date('2025-01-01'),
+            product: {
+                create: {
+                    productName: 'Pain Relief Medicine',
+                    productCode: 'PRM-1001',
+                    category: client_1.ProductCategory.DRUG,
+                    manufacturerId: manufacturer.id,
+                },
+            },
+        },
+    });
     console.log('Test data created:');
-    console.log(`- Admin: ${admin.email}`);
-    console.log(`- Manufacturer: ${manufacturerUser.email}`);
-    console.log(`- Consumer: ${consumer.email}`);
+    console.log(`- Admin: ${admin.email} / password: Admin1234`);
+    console.log(`- Manufacturer: ${manufacturerUser.email} / password: Manufacturer1234`);
+    console.log(`- Consumer: ${consumer.email} / password: Consumer1234`);
     console.log('Seeding complete!');
 }
 main()

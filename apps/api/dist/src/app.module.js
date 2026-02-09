@@ -18,6 +18,8 @@ const config_module_1 = require("@nestjs/config/dist/config.module");
 const products_module_1 = require("./products/products.module");
 const batches_module_1 = require("./batches/batches.module");
 const verification_module_1 = require("./verification/verification.module");
+const profile_module_1 = require("./profile/profile.module");
+const manufacturer_module_1 = require("./manufacturer/manufacturer.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -34,6 +36,8 @@ exports.AppModule = AppModule = __decorate([
             products_module_1.ProductsModule,
             batches_module_1.BatchesModule,
             verification_module_1.VerificationModule,
+            profile_module_1.ProfileModule,
+            manufacturer_module_1.ManufacturerModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

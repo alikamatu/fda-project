@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, IsNumber, Min, IsDateString } from 'class-validator';
 import { ProductCategory } from '@prisma/client';
 
 export class CreateProductDto {
@@ -15,4 +15,18 @@ export class CreateProductDto {
   @IsNotEmpty()
   @IsEnum(ProductCategory)
   category: ProductCategory;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(50)
+  batchNumber: string;
+
+  @IsNotEmpty()
+  @IsDateString()
+  expiryDate: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @Min(1)
+  quantity: number;
 }
