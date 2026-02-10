@@ -36,14 +36,10 @@ export function Navbar() {
   }, []);
 
   // Close mobile menu when route changes
+  // Only depend on `pathname` so opening the menu doesn't trigger an immediate close.
   useEffect(() => {
-    if (isOpen) {
-      const timer = setTimeout(() => {
-        setIsOpen(false);
-      }, 0);
-      return () => clearTimeout(timer);
-    }
-  }, [pathname, isOpen]);
+    setIsOpen(false);
+  }, [pathname]);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -141,7 +137,7 @@ export function Navbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-gray-600/50 z-40 lg:hidden"
+              className="fixed inset-0 bg-gray-600/50 z-[60] lg:hidden"
               onClick={() => setIsOpen(false)}
               aria-hidden="true"
             />
@@ -152,7 +148,7 @@ export function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'tween', duration: 0.2 }}
-              className="fixed inset-y-0 right-0 w-full max-w-sm bg-white z-50 lg:hidden shadow-xl"
+              className="fixed inset-y-0 right-0 w-full max-w-sm bg-white z-[60] lg:hidden shadow-xl"
               role="dialog"
               aria-modal="true"
               aria-label="Mobile navigation menu"

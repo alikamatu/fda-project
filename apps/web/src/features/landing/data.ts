@@ -10,11 +10,11 @@ export const HERO_DATA: HeroProps = {
   },
   primaryAction: {
     label: "Verify a Product",
-    href: "/verify"
+    href: "/auth/login"
   },
   secondaryAction: {
     label: "Register as Manufacturer",
-    href: "/register"
+    href: "/auth/register"
   }
 };
 
@@ -150,10 +150,10 @@ export const CTA_DATA: CTAProps = {
   description: "Confirm product authenticity in seconds and protect yourself from counterfeit or expired products.",
   primaryAction: {
     label: "Verify a Product",
-    href: "/verify"
+    href: "/auth/login"
   },
   secondaryAction: {
     label: "Register as Manufacturer",
-    href: "/register"
+    href: "/auth/register"
   }
 };

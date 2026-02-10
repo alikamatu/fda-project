@@ -83,7 +83,7 @@ export function CTA({
               </div>
 
               {/* Trust Indicator - Subtle */}
-              <div className="mt-8 pt-6 border-t border-gray-100">
+              <div className="mt-8 p-6 border-t border-gray-100">
                 <p className="text-[10px] font-medium uppercase tracking-widest text-gray-400">
                   FDA Verification System • Secure • Compliant
                 </p>
