@@ -55,7 +55,7 @@ export function RejectModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-gray-600/50 z-50"
+            className="fixed inset-0 bg-black/40 z-50"
             onClick={handleClose}
             aria-hidden="true"
           />

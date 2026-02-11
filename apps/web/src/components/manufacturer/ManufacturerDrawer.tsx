@@ -63,7 +63,7 @@ export function ManufacturerDrawer({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-gray-600/50 z-40"
+            className="fixed inset-0 bg-black/40 z-40"
             onClick={onClose}
             aria-hidden="true"
           />

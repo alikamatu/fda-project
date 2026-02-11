@@ -6,10 +6,8 @@ import {
   HomeIcon,
   DocumentCheckIcon,
   CubeIcon,
-  BuildingOfficeIcon,
   UsersIcon,
   ClipboardDocumentListIcon,
-  BellIcon,
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
 } from '@heroicons/react/24/outline';
@@ -20,13 +18,10 @@ import { UserRole } from '@/types/auth';
 
 const adminNavigation = [
   { name: 'Dashboard Overview', href: '/admin', icon: HomeIcon },
-  { name: 'Verifications', href: '/admin/verifications', icon: DocumentCheckIcon },
   { name: 'Products', href: '/admin/products', icon: CubeIcon },
   { name: 'Batches', href: '/admin/batches', icon: CubeIcon },
-  { name: 'Manufacturers', href: '/admin/manufacturers', icon: BuildingOfficeIcon },
-  { name: 'Users', href: '/admin/users', icon: UsersIcon },
+  { name: 'Manufacturers', href: '/admin/users', icon: UsersIcon },
   { name: 'Audit Logs', href: '/admin/audit-logs', icon: ClipboardDocumentListIcon },
-  { name: 'Notifications', href: '/admin/notifications', icon: BellIcon },
   { name: 'Settings', href: '/admin/settings', icon: Cog6ToothIcon },
 ];
 

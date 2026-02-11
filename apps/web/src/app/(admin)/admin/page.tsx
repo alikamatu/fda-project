@@ -11,35 +11,34 @@ import {
   UsersIcon,
   ChartBarIcon,
 } from '@heroicons/react/24/outline';
-
-interface DashboardStats {
-  totalVerifications: number;
-  validVerifications: number;
-  fakeVerifications: number;
-  expiredVerifications: number;
-  registeredManufacturers: number;
-  totalProducts: number;
-  activeUsers: number;
-}
+import { AdminDashboardService, AdminStats } from '@/services/admin-dashboard.service';
+import { VerificationService } from '@/services/verification.service';
+import { VerificationLog } from '@/types/verification';
+import { formatDistanceToNow } from 'date-fns';
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [recentVerifications, setRecentVerifications] = useState<VerificationLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Mock API call
-    setTimeout(() => {
-      setStats({
-        totalVerifications: 12543,
-        validVerifications: 11230,
-        fakeVerifications: 230,
-        expiredVerifications: 1083,
-        registeredManufacturers: 142,
-        totalProducts: 2450,
-        activeUsers: 89,
-      });
-      setIsLoading(false);
-    }, 500);
+    const fetchDashboardData = async () => {
+      try {
+        setIsLoading(true);
+        const [statsData, recentData] = await Promise.all([
+          AdminDashboardService.getStats(),
+          VerificationService.getRecentVerifications(5),
+        ]);
+        setStats(statsData);
+        setRecentVerifications(recentData);
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
   }, []);
 
   const statCards = [
@@ -48,21 +47,22 @@ export default function DashboardPage() {
       value: stats?.totalVerifications.toLocaleString() || '0',
       icon: DocumentCheckIcon,
       color: 'blue',
-      change: '+12%',
+      // Mock change as we don't have historical data yet
+      change: '+0%',
     },
     {
       title: 'Manufacturers',
       value: stats?.registeredManufacturers.toLocaleString() || '0',
       icon: BuildingOfficeIcon,
       color: 'green',
-      subValue: `${stats ? Math.round((stats.registeredManufacturers / 200) * 100) : 0}% of target`,
+      subValue: `${stats ? Math.round((stats.registeredManufacturers / 100) * 100) : 0}% of target`,
     },
     {
       title: 'Products',
       value: stats?.totalProducts.toLocaleString() || '0',
       icon: CubeIcon,
       color: 'purple',
-      change: '+5%',
+      change: '+0%',
     },
     {
       title: 'Active Users',
@@ -112,9 +112,17 @@ export default function DashboardPage() {
         </div>
         
         {isLoading ? (
-          <div className="space-y-3">
-            <div className="h-4 bg-gray-200 rounded animate-pulse" />
-            <div className="h-4 bg-gray-200 rounded animate-pulse" />
+          <div className="space-y-4 py-8">
+            <div className="flex justify-around items-end h-32 gap-4">
+              <div className="w-1/4 bg-gray-100 rounded-t h-1/2 animate-pulse" />
+              <div className="w-1/4 bg-gray-100 rounded-t h-3/4 animate-pulse" />
+              <div className="w-1/4 bg-gray-100 rounded-t h-1/4 animate-pulse" />
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+               <div className="h-4 bg-gray-100 rounded animate-pulse" />
+               <div className="h-4 bg-gray-100 rounded animate-pulse" />
+               <div className="h-4 bg-gray-100 rounded animate-pulse" />
+            </div>
           </div>
         ) : stats && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -127,7 +135,7 @@ export default function DashboardPage() {
                 <div 
                   className="h-full bg-green-500 rounded-full" 
                   style={{ 
-                    width: `${(stats.validVerifications / stats.totalVerifications) * 100}%` 
+                    width: `${stats.totalVerifications > 0 ? (stats.validVerifications / stats.totalVerifications) * 100 : 0}%` 
                   }} 
                 />
               </div>
@@ -142,7 +150,7 @@ export default function DashboardPage() {
                 <div 
                   className="h-full bg-red-500 rounded-full" 
                   style={{ 
-                    width: `${(stats.fakeVerifications / stats.totalVerifications) * 100}%` 
+                    width: `${stats.totalVerifications > 0 ? (stats.fakeVerifications / stats.totalVerifications) * 100 : 0}%` 
                   }} 
                 />
               </div>
@@ -157,7 +165,7 @@ export default function DashboardPage() {
                 <div 
                   className="h-full bg-amber-500 rounded-full" 
                   style={{ 
-                    width: `${(stats.expiredVerifications / stats.totalVerifications) * 100}%` 
+                    width: `${stats.totalVerifications > 0 ? (stats.expiredVerifications / stats.totalVerifications) * 100 : 0}%` 
                   }} 
                 />
               </div>
@@ -172,28 +180,46 @@ export default function DashboardPage() {
         <Card>
           <h3 className="text-sm font-medium text-gray-900 mb-4">Recent Verifications</h3>
           <div className="space-y-3">
-            {[
-              { id: 'V-7891', status: 'VALID', product: 'Amoxicillin 500mg', time: '2 min ago' },
-              { id: 'V-7890', status: 'FAKE', product: 'Paracetamol 500mg', time: '15 min ago' },
-              { id: 'V-7889', status: 'EXPIRED', product: 'Ibuprofen 200mg', time: '1 hour ago' },
-              { id: 'V-7888', status: 'VALID', product: 'Vitamin C 1000mg', time: '2 hours ago' },
-            ].map((item) => (
-              <div key={item.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
-                <div>
-                  <p className="text-xs font-medium text-gray-900">{item.id}</p>
-                  <p className="text-xs text-gray-500">{item.product}</p>
+            {isLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between py-2 animate-pulse">
+                  <div className="space-y-2">
+                    <div className="h-3 w-16 bg-gray-100 rounded" />
+                    <div className="h-3 w-32 bg-gray-100 rounded" />
+                  </div>
+                  <div className="h-5 w-12 bg-gray-100 rounded" />
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant={
-                    item.status === 'VALID' ? 'success' : 
-                    item.status === 'FAKE' ? 'error' : 'warning'
-                  } size="sm">
-                    {item.status}
-                  </Badge>
-                  <span className="text-xs text-gray-400">{item.time}</span>
+              ))
+            ) : recentVerifications.length > 0 ? (
+              recentVerifications.map((item) => (
+                <div key={item.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-gray-900 truncate">
+                      {item.verificationCode?.code || 'Anonymous'}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {item.verificationCode?.productBatch?.product?.productName || 'Unknown Product'}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <Badge variant={
+                      item.status === 'VALID' ? 'success' : 
+                      item.status === 'FAKE' ? 'error' : 
+                      item.status === 'EXPIRED' ? 'warning' : 'neutral'
+                    } size="sm">
+                      {item.status}
+                    </Badge>
+                    <span className="text-[10px] text-gray-400">
+                      {formatDistanceToNow(new Date(item.verifiedAt), { addSuffix: true })}
+                    </span>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="py-8 text-center">
+                <p className="text-xs text-gray-500">No recent verifications</p>
               </div>
-            ))}
+            )}
           </div>
         </Card>
 
