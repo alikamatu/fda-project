@@ -20,6 +20,8 @@ const batches_module_1 = require("./batches/batches.module");
 const verification_module_1 = require("./verification/verification.module");
 const profile_module_1 = require("./profile/profile.module");
 const manufacturer_module_1 = require("./manufacturer/manufacturer.module");
+const admin_dashboard_module_1 = require("./admin-dashboard/admin-dashboard.module");
+const audit_logs_module_1 = require("./audit-logs/audit-logs.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -38,6 +40,8 @@ exports.AppModule = AppModule = __decorate([
             verification_module_1.VerificationModule,
             profile_module_1.ProfileModule,
             manufacturer_module_1.ManufacturerModule,
+            admin_dashboard_module_1.AdminDashboardModule,
+            audit_logs_module_1.AuditLogsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

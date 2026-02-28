@@ -21,16 +21,14 @@ apiClient.setUnauthorizedHandler((status: number, message?: string) => {
   const hasToken = tokenService.isAuthenticated();
   
   if (status === 401 && hasToken) {
-    console.error('[AuthProvider] Token exists but returned 401 - likely validation failed');
-    console.error('[AuthProvider] Check: Does user exist in DB? Is user.isActive = true?');
+    // 401 on a route that HAD a token means the token is likely invalid/expired
+    console.error('[AuthProvider] Token exists but returned 401 - likely validation failed or expired');
   }  else if (status === 403) {
-        // 403 means the token is valid but user lacks permissions
-        // Don't logout, just let the page handle the error
-        console.warn('[AuthProvider] User lacks required permissions (403):', message);
+        // 403 means the token is valid but user lacks permissions (or is inactive)
+        console.warn('[AuthProvider] Access forbidden (403):', message);
       } else if (status === 401 && !hasToken) {
-        // 401 without a token is expected for protected routes
-        // Don't logout, user isn't logged in anyway
-        console.log('[AuthProvider] No token provided for protected route (401)');
+        // 401 without a token is expected for protected routes OR failed login
+        console.log('[AuthProvider] Unauthorized (401):', message);
       }
     });
 

@@ -63,12 +63,24 @@ export const AuthService = {
     };
   },
 
-  async registerManufacturer(data: ManufacturerRegisterRequest): Promise<ManufacturerRegisterResponse> {
+  async registerManufacturer(data: ManufacturerRegisterRequest): Promise<{ user: AuthUser; manufacturer: ManufacturerRegisterResponse['manufacturer'] }> {
     // Remove confirmPassword and role before sending to API (API sets role automatically)
     const payload = { ...data } as Record<string, unknown>;
     delete payload.confirmPassword;
     delete payload.role;
-    return apiClient.post<ManufacturerRegisterResponse>('/auth/register/manufacturer', payload);
+
+    const response = await apiClient.post<ManufacturerRegisterResponse>('/auth/register/manufacturer', payload);
+
+    // Normalize the user portion so callers can treat it like an AuthUser
+    const user: AuthUser = {
+      id: response.user.id,
+      email: response.user.email,
+      fullName: response.user.fullName,
+      role: response.user.role as AuthUser['role'],
+      isActive: response.user.isActive,
+    };
+
+    return { user, manufacturer: response.manufacturer };
   },
 
   async getCurrentUser(): Promise<AuthUser | null> {

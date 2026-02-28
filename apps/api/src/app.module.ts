@@ -11,6 +11,8 @@ import { BatchesModule } from './batches/batches.module';
 import { VerificationModule } from './verification/verification.module';
 import { ProfileModule } from './profile/profile.module';
 import { ManufacturerModule } from './manufacturer/manufacturer.module';
+import { AdminDashboardModule } from './admin-dashboard/admin-dashboard.module';
+import { AuditLogsModule } from './audit-logs/audit-logs.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { ManufacturerModule } from './manufacturer/manufacturer.module';
     VerificationModule,
     ProfileModule,
     ManufacturerModule,
+    AdminDashboardModule,
+    AuditLogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

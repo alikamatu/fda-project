@@ -4,6 +4,7 @@ const client_1 = require("@prisma/client");
 const bcrypt = require("bcrypt");
 const adapter_pg_1 = require("@prisma/adapter-pg");
 const pg_1 = require("pg");
+const uuid_1 = require("uuid");
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
     throw new Error('DATABASE_URL environment variable is not set');
@@ -52,6 +53,14 @@ async function main() {
             isActive: true,
         },
     });
+    const generateCodes = (qty) => {
+        const codes = [];
+        for (let i = 0; i < qty; i++) {
+            const uuid = (0, uuid_1.v4)();
+            codes.push(`FDA-PROD-${uuid.toUpperCase().replace(/-/g, '').substring(0, 12)}`);
+        }
+        return codes;
+    };
     const productBatch = await prisma.productBatch.create({
         data: {
             batchNumber: 'BATCH-001',
@@ -66,6 +75,9 @@ async function main() {
                     manufacturerId: manufacturer.id,
                 },
             },
+            verificationCodes: {
+                create: generateCodes(10).map(code => ({ code }))
+            }
         },
     });
     console.log('Test data created:');

@@ -102,8 +102,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      await AuthService.registerManufacturer(data);
-      setState(prev => ({ ...prev, isLoading: false }));
+      const result = await AuthService.registerManufacturer(data);
+      // store returned user (will have role MANUFACTURER)
+      setState(prev => ({ ...prev, user: result.user, isLoading: false }));
       router.push(APP_ROUTES.MANUFACTURER_PENDING);
     } catch (error) {
       setState(prev => ({

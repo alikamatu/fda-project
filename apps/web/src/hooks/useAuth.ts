@@ -79,10 +79,17 @@ export function useRegisterUser() {
 
 export function useRegisterManufacturer() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const setUser = useAuthStore((state) => state.setUser);
 
   return useMutation({
     mutationFn: (data: ManufacturerRegisterRequest) => AuthService.registerManufacturer(data),
-    onSuccess: () => {
+    onSuccess: (result) => {
+      // the service now returns { user, manufacturer }
+      const { user } = result;
+      // store the partially registered user so role shows correctly in UI
+      setUser(user);
+      queryClient.setQueryData(AUTH_QUERY_KEY, user);
       router.push(APP_ROUTES.MANUFACTURER_PENDING);
     },
   });

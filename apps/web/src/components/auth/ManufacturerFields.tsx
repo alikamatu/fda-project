@@ -39,9 +39,10 @@ export function ManufacturerFields({ register, errors }: ManufacturerFieldsProps
           />
           
           <Input
-            label="Contact Phone (Optional)"
+            label="Contact Phone"
             {...register('contactPhone')}
             error={errors.contactPhone?.message}
+            required
           />
           
           <div>

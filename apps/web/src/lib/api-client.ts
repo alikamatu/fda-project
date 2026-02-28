@@ -33,30 +33,34 @@ class ApiClient {
   }
 
   private async handleResponse<T>(response: Response): Promise<T> {
+    // Attempt to parse JSON error message once
+    let errorMessage = `HTTP Error ${response.status}`;
+    let errorData: any = null;
+    
+    if (!response.ok) {
+      try {
+        errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch {
+        // Not a JSON response
+      }
+    }
+
     // Handle 401 Unauthorized
     if (response.status === 401) {
-      const message = `Unauthorized (401)`;
-      this.unauthorizedHandler?.(response.status, message);
-      throw new Error(message);
+      this.unauthorizedHandler?.(response.status, errorMessage);
+      throw new Error(errorMessage);
     }
 
     // Handle 403 Forbidden
     if (response.status === 403) {
-      const message = `Forbidden (403)`;
-      this.unauthorizedHandler?.(response.status, message);
-      throw new Error(message);
+      this.unauthorizedHandler?.(response.status, errorMessage);
+      throw new Error(errorMessage);
     }
 
     // Handle other error statuses
     if (!response.ok) {
-      let message = `HTTP Error ${response.status}`;
-      try {
-        const error = await response.json();
-        message = error.message || message;
-      } catch {
-        // Response wasn't JSON
-      }
-      throw new Error(message);
+      throw new Error(errorMessage);
     }
 
     // Handle 204 No Content

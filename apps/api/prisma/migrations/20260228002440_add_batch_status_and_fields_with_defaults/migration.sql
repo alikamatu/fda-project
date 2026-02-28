@@ -1,0 +1,9 @@
+-- CreateEnum
+CREATE TYPE "BatchStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+
+-- AlterTable
+ALTER TABLE "ProductBatch" ADD COLUMN     "notes" TEXT,
+ADD COLUMN     "qrCodeUrl" TEXT,
+ADD COLUMN     "status" "BatchStatus" NOT NULL DEFAULT 'PENDING',
+ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "verifiedAt" TIMESTAMP(3);

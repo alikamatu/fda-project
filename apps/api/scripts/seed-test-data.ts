@@ -2,6 +2,7 @@ import { PrismaClient, UserRole, ProductCategory } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
+import { v4 as uuidv4 } from 'uuid';
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -61,7 +62,17 @@ async function main() {
     },
   });
 
-  //create test product batch
+  // Helper for generating codes
+  const generateCodes = (qty: number) => {
+    const codes: string[] = [];
+    for (let i = 0; i < qty; i++) {
+        const uuid = uuidv4();
+        codes.push(`FDA-PROD-${uuid.toUpperCase().replace(/-/g, '').substring(0, 12)}`);
+    }
+    return codes;
+  };
+
+  // Create test product batch
   const productBatch = await prisma.productBatch.create({
     data: {
       batchNumber: 'BATCH-001',
@@ -76,6 +87,9 @@ async function main() {
           manufacturerId: manufacturer.id,
         },
       },
+      verificationCodes: {
+        create: generateCodes(10).map(code => ({ code })) // Generate 10 codes for testing
+      }
     },
   });
 

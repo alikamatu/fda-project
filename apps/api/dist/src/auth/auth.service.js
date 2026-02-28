@@ -114,12 +114,7 @@ let AuthService = class AuthService {
             throw new common_1.UnauthorizedException('Invalid credentials');
         }
         if (!user.isActive) {
-            console.warn('[AuthService] User account is inactive');
-            throw new common_1.ForbiddenException('Account is inactive. Please contact administrator.');
-        }
-        console.log('[AuthService] User active status:', user.isActive);
-        if (!user.isActive) {
-            console.warn('[AuthService] User account is inactive');
+            console.warn('[AuthService] User account is inactive:', dto.email);
             throw new common_1.ForbiddenException('Account is inactive. Please contact administrator.');
         }
         const isPasswordValid = await bcrypt.compare(dto.password, user.passwordHash);

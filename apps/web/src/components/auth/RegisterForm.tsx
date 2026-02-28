@@ -9,7 +9,7 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { FormError } from '@/components/ui/FormError';
 import { ManufacturerFields } from './ManufacturerFields';
-import { useRegisterUser, useRegisterManufacturer } from '@/hooks/useAuth';
+import { useRegisterManufacturer, useRegisterUser } from '@/hooks/useAuth';
 import {
   userRegisterSchema,
   manufacturerRegisterSchema,
@@ -19,20 +19,16 @@ import {
 import { UserRole } from '@/types/auth';
 import Link from 'next/link';
 
-const roleOptions = [
-  { value: UserRole.CONSUMER, label: 'Consumer' },
-  { value: UserRole.MANUFACTURER, label: 'Manufacturer' },
-];
-
 export function RegisterForm() {
-  const [isManufacturer, setIsManufacturer] = useState(false);
+  const [isManufacturer, setIsManufacturer] = useState(true); // defaulting to manufacturer registration
   
-  const { 
-    mutate: registerUser, 
-    isPending: isUserPending, 
-    error: userError 
+  // we need two mutations: one for simple users and one for manufacturers
+  const {
+    mutate: registerUser,
+    isPending: isUserPending,
+    error: userError,
   } = useRegisterUser();
-  
+
   const { 
     mutate: registerManufacturer, 
     isPending: isManufacturerPending, 
@@ -45,35 +41,43 @@ export function RegisterForm() {
   const methods = useForm<UserRegisterFormData | ManufacturerRegisterFormData>({
     resolver: zodResolver(isManufacturer ? manufacturerRegisterSchema : userRegisterSchema),
     defaultValues: {
-      role: UserRole.CONSUMER,
+      role: isManufacturer ? UserRole.MANUFACTURER : UserRole.CONSUMER,
     },
   });
 
-  const { register, handleSubmit, control, formState: { errors } } = methods;
-  
-  const selectedRole = useWatch({
-    control,
-    name: 'role',
-    defaultValue: UserRole.CONSUMER,
-  });
-
+  // keep form role value in sync with the toggle state
   useEffect(() => {
-    setIsManufacturer(selectedRole === UserRole.MANUFACTURER);
-  }, [selectedRole]);
+    methods.setValue('role', isManufacturer ? UserRole.MANUFACTURER : UserRole.CONSUMER);
+  }, [isManufacturer, methods]);
+
+  const { register, handleSubmit, formState: { errors } } = methods;
+
+  // isManufacturer is managed manually or via any UI toggle; we no longer watch the form value
 
   const onSubmit = (data: UserRegisterFormData | ManufacturerRegisterFormData) => {
-    if (isManufacturer) {
-      registerManufacturer(data as ManufacturerRegisterFormData);
-    } else {
-      registerUser(data as UserRegisterFormData);
-    }
+      if (isManufacturer) {
+        registerManufacturer(data as ManufacturerRegisterFormData);
+      } else {
+        registerUser(data as UserRegisterFormData);
+      }
   };
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <FormError message={error?.message || ''} />
-        
+      
+        {/* account type selector */}
+        <div className="hidden space-x-4 mb-4">
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-md transition-colors ${isManufacturer ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'}`}
+            onClick={() => setIsManufacturer(true)}
+          >
+            Manufacturer
+          </button>
+        </div>
+
         <div className="space-y-4">
           {/* Personal Information */}
           <div className="space-y-4">
@@ -120,24 +124,12 @@ export function RegisterForm() {
               />
             </motion.div>
             
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 }}
-            >
-              <Select
-                label="Account Type"
-                options={roleOptions}
-                {...register('role')}
-                error={errors.role?.message}
-                required
-              />
-            </motion.div>
+            {/* role is managed via a toggle - keep it in the form but hidden from users */}
+            <input type="hidden" value={isManufacturer ? UserRole.MANUFACTURER : UserRole.CONSUMER} {...register('role')} />
           </div>
 
           {/* Manufacturer Fields */}
           <AnimatePresence>
-            {isManufacturer && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
@@ -149,7 +141,6 @@ export function RegisterForm() {
                   errors={errors} 
                 />
               </motion.div>
-            )}
           </AnimatePresence>
 
           {/* Password Fields */}
