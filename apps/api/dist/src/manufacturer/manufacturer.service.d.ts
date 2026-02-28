@@ -38,8 +38,8 @@ export declare class ManufacturerService {
                 code: string;
                 qrImageUrl: string | null;
                 isUsed: boolean;
-                productBatchId: string;
                 usedAt: Date | null;
+                productBatchId: string;
             };
         } & {
             id: string;
@@ -97,8 +97,8 @@ export declare class ManufacturerService {
             code: string;
             qrImageUrl: string | null;
             isUsed: boolean;
-            productBatchId: string;
             usedAt: Date | null;
+            productBatchId: string;
         };
     } & {
         id: string;

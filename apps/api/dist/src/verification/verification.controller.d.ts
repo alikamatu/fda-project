@@ -52,8 +52,8 @@ export declare class VerificationController {
             code: string;
             qrImageUrl: string | null;
             isUsed: boolean;
-            productBatchId: string;
             usedAt: Date | null;
+            productBatchId: string;
         };
     } & {
         id: string;
