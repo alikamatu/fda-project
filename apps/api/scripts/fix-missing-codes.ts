@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 import { Pool } from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config';
@@ -9,7 +11,12 @@ if (!connectionString) {
   throw new Error('DATABASE_URL environment variable is not set');
 }
 
-const pool = new Pool({ connectionString });
+const pool = new Pool({ 
+  connectionString,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 
 async function main() {
