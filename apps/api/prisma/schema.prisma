@@ -1,0 +1,184 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String            @id @default(uuid())
+  fullName      String
+  email         String            @unique
+  phone         String?
+  passwordHash  String
+  role          UserRole
+  isActive      Boolean           @default(true)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  auditLogs     AuditLog[]
+  manufacturer  Manufacturer?
+  notifications Notification[]
+  verifications VerificationLog[]
+}
+
+model Manufacturer {
+  id                 String    @id @default(uuid())
+  companyName        String
+  registrationNumber String    @unique
+  contactEmail       String
+  contactPhone       String?
+  address            String
+  isApproved         Boolean   @default(false)
+  userId             String    @unique
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id])
+  products           Product[]
+}
+
+model Product {
+  id             String          @id @default(uuid())
+  productName    String
+  productCode    String          @unique
+  description    String?
+  ingredients    String?
+  cautions       String?
+  images         String[]
+  category       ProductCategory
+  approvalStatus ApprovalStatus  @default(PENDING)
+  manufacturerId String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  alerts         Alert[]
+  manufacturer   Manufacturer    @relation(fields: [manufacturerId], references: [id])
+  batches        ProductBatch[]
+}
+
+enum BatchStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ProductBatch {
+  id                String             @id @default(uuid())
+  batchNumber       String?
+  manufactureDate   DateTime
+  expiryDate        DateTime
+  quantity          Int
+  status            BatchStatus        @default(PENDING)
+  notes             String?
+  qrCodeUrl         String?
+  productId         String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @default(now()) @updatedAt
+  verifiedAt        DateTime?
+  product           Product            @relation(fields: [productId], references: [id])
+  verificationCodes VerificationCode[]
+}
+
+model VerificationCode {
+  id             String            @id @default(uuid())
+  code           String            @unique
+  qrImageUrl     String?
+  isUsed         Boolean           @default(false)
+  productBatchId String
+  createdAt      DateTime          @default(now())
+  usedAt         DateTime?
+  productBatch   ProductBatch      @relation(fields: [productBatchId], references: [id])
+  logs           VerificationLog[]
+}
+
+model VerificationLog {
+  id                 String             @id @default(uuid())
+  status             VerificationStatus
+  location           String?
+  ipAddress          String?
+  deviceInfo         String?
+  verificationCodeId String
+  userId             String?
+  verifiedAt         DateTime           @default(now())
+  user               User?              @relation(fields: [userId], references: [id])
+  verificationCode   VerificationCode   @relation(fields: [verificationCodeId], references: [id])
+}
+
+model Alert {
+  id         String        @id @default(uuid())
+  type       AlertType
+  message    String
+  severity   AlertSeverity
+  isResolved Boolean       @default(false)
+  productId  String
+  createdAt  DateTime      @default(now())
+  product    Product       @relation(fields: [productId], references: [id])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  action      String
+  entityType  String
+  entityId    String
+  metadata    Json?
+  performedBy String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [performedBy], references: [id])
+}
+
+model Notification {
+  id        String              @id @default(uuid())
+  title     String
+  message   String
+  channel   NotificationChannel
+  isRead    Boolean             @default(false)
+  userId    String
+  createdAt DateTime            @default(now())
+  user      User                @relation(fields: [userId], references: [id])
+}
+
+enum UserRole {
+  CONSUMER
+  MANUFACTURER
+  ADMIN
+}
+
+enum ProductCategory {
+  DRUG
+  FOOD
+  COSMETIC
+  MEDICAL_DEVICE
+  ELECTRONIC
+  OTHER
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum VerificationStatus {
+  VALID
+  EXPIRED
+  FAKE
+  USED
+}
+
+enum AlertType {
+  FAKE_PRODUCT
+  EXPIRED_PRODUCT
+  MULTIPLE_SCANS
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+}

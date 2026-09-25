@@ -1,0 +1,106 @@
+import { apiClient } from '@/lib/api-client';
+import { tokenService } from './token.service';
+import type {
+  AuthUser,
+  LoginRequest,
+  UserRegisterRequest,
+  ManufacturerRegisterRequest,
+} from '@/types/auth';
+
+interface LoginResponse {
+  accessToken: string;
+  user: AuthUser;
+}
+
+interface RegisterResponse {
+  id: string;
+  email: string;
+  fullName: string;
+  role: string;
+  isActive: boolean;
+}
+
+interface ManufacturerRegisterResponse {
+  user: RegisterResponse;
+  manufacturer: {
+    companyName: string;
+    registrationNumber: string;
+    isApproved: boolean;
+  };
+}
+
+export const AuthService = {
+  async login(data: LoginRequest): Promise<AuthUser> {
+    try {
+      console.log('[AuthService] Attempting login with:', { email: data.email });
+      const response = await apiClient.post<LoginResponse>('/auth/login', data);
+      console.log('[AuthService] Login response:', { 
+        hasAccessToken: !!response.accessToken,
+        user: response.user 
+      });
+      tokenService.setToken(response.accessToken);
+      console.log('[AuthService] Token set, stored token:', { 
+        token: tokenService.getToken() ? 'EXISTS' : 'MISSING' 
+      });
+      return response.user;
+    } catch (error) {
+      console.error('[AuthService] Login failed:', error);
+      throw error;
+    }
+  },
+
+  async registerUser(data: UserRegisterRequest): Promise<AuthUser> {
+    // Remove confirmPassword before sending to API
+    const payload = { ...data } as Record<string, unknown>;
+    delete payload.confirmPassword;
+    const response = await apiClient.post<RegisterResponse>('/auth/register/user', payload);
+    return {
+      id: response.id,
+      email: response.email,
+      fullName: response.fullName,
+      role: response.role as AuthUser['role'],
+      isActive: response.isActive,
+    };
+  },
+
+  async registerManufacturer(data: ManufacturerRegisterRequest): Promise<{ user: AuthUser; manufacturer: ManufacturerRegisterResponse['manufacturer'] }> {
+    // Remove confirmPassword and role before sending to API (API sets role automatically)
+    const payload = { ...data } as Record<string, unknown>;
+    delete payload.confirmPassword;
+    delete payload.role;
+
+    const response = await apiClient.post<ManufacturerRegisterResponse>('/auth/register/manufacturer', payload);
+
+    // Normalize the user portion so callers can treat it like an AuthUser
+    const user: AuthUser = {
+      id: response.user.id,
+      email: response.user.email,
+      fullName: response.user.fullName,
+      role: response.user.role as AuthUser['role'],
+      isActive: response.user.isActive,
+    };
+
+    return { user, manufacturer: response.manufacturer };
+  },
+
+  async getCurrentUser(): Promise<AuthUser | null> {
+    if (!tokenService.isAuthenticated()) {
+      console.log('[AuthService] No token, returning null');
+      return null;
+    }
+
+    try {
+      console.log('[AuthService] Fetching current user');
+      const user = await apiClient.get<AuthUser>('/auth/me');
+      console.log('[AuthService] Got user:', user);
+      return user;
+    } catch (error) {
+      console.error('[AuthService] Failed to get user:', error);
+      return null;
+    }
+  },
+
+  logout(): void {
+    tokenService.removeToken();
+  },
+};

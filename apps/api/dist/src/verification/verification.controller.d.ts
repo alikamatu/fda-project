@@ -1,0 +1,71 @@
+import { VerificationService } from './verification.service';
+import { VerifyProductDto } from './dto/verify-product.dto';
+export declare class VerificationController {
+    private readonly verificationService;
+    constructor(verificationService: VerificationService);
+    verifyProduct(verifyProductDto: VerifyProductDto, req: any): Promise<import("./interfaces/verification-response.interface").VerificationResponse>;
+    getVerificationStats(): Promise<{
+        date: Date;
+        total: number;
+        byStatus: {};
+    }>;
+    getRecentVerifications(): Promise<({
+        user: {
+            id: string;
+            email: string;
+            role: import(".prisma/client").$Enums.UserRole;
+        } | null;
+        verificationCode: {
+            productBatch: {
+                product: {
+                    manufacturer: {
+                        companyName: string;
+                    };
+                } & {
+                    id: string;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    productName: string;
+                    productCode: string;
+                    description: string | null;
+                    ingredients: string | null;
+                    cautions: string | null;
+                    images: string[];
+                    category: import(".prisma/client").$Enums.ProductCategory;
+                    approvalStatus: import(".prisma/client").$Enums.ApprovalStatus;
+                    manufacturerId: string;
+                };
+            } & {
+                id: string;
+                createdAt: Date;
+                updatedAt: Date;
+                batchNumber: string | null;
+                manufactureDate: Date;
+                expiryDate: Date;
+                quantity: number;
+                status: import(".prisma/client").$Enums.BatchStatus;
+                notes: string | null;
+                qrCodeUrl: string | null;
+                productId: string;
+                verifiedAt: Date | null;
+            };
+        } & {
+            id: string;
+            createdAt: Date;
+            code: string;
+            qrImageUrl: string | null;
+            isUsed: boolean;
+            usedAt: Date | null;
+            productBatchId: string;
+        };
+    } & {
+        id: string;
+        status: import(".prisma/client").$Enums.VerificationStatus;
+        verifiedAt: Date;
+        userId: string | null;
+        location: string | null;
+        ipAddress: string | null;
+        deviceInfo: string | null;
+        verificationCodeId: string;
+    })[]>;
+}
