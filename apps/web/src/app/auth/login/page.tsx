@@ -8,6 +8,7 @@ export default function LoginPage() {
       subtitle="Access the FDA Product Verification System"
       maxWidth="md"
       headerBadge="Authorized Access"
+      noCard={true}
     >
       <LoginForm />
     </AuthCard>

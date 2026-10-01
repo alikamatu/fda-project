@@ -123,14 +123,14 @@ export function LoginForm() {
         </Button>
       </motion.div>
 
-      <div className="text-center pt-2 border-t border-slate-100">
-        <p className="text-xs text-slate-500">
-          Don&apos;t have an account?{' '}
+      <div className="text-center pt-3 border-t border-slate-200/60">
+        <p className="text-xs sm:text-sm text-slate-500">
+          New manufacturer?{' '}
           <Link
             href="/auth/register"
             className="text-blue-900 hover:text-blue-700 font-semibold transition-colors"
           >
-            Create account
+            Register as Manufacturer
           </Link>
         </p>
       </div>
