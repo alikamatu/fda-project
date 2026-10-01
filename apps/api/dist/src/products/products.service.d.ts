@@ -42,8 +42,8 @@ export declare class ProductsService {
     })[]>;
     findOneProduct(manufacturerId: string, productId: string): Promise<{
         manufacturer: {
-            companyName: string;
             registrationNumber: string;
+            companyName: string;
         };
         batches: ({
             verificationCodes: {
@@ -123,8 +123,8 @@ export declare class ProductsService {
     }>;
     findOneAdmin(id: string): Promise<{
         manufacturer: {
-            companyName: string;
             registrationNumber: string;
+            companyName: string;
             contactEmail: string;
             contactPhone: string | null;
         };

@@ -56,8 +56,8 @@ export declare class ProductsController {
     })[]>;
     getProduct(req: any, productId: string): Promise<{
         manufacturer: {
-            companyName: string;
             registrationNumber: string;
+            companyName: string;
         };
         batches: ({
             verificationCodes: {

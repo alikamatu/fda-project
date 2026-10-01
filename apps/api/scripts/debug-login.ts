@@ -31,17 +31,14 @@ async function main() {
     passwordHash: user.passwordHash ? '(present)' : '(missing)',
   });
 
-  const password = 'Admin1234';
-  const isMatch = await bcrypt.compare(password, user.passwordHash);
-
-  if (isMatch) {
-    console.log('✅ Password "Admin1234" MATCHES the stored hash.');
-  } else {
-    console.error('❌ Password "Admin1234" DOES NOT MATCH the stored hash.');
-    
-    // Validate if re-hashing "Admin1234" produces a valid hash structure (sanity check)
-    const newHash = await bcrypt.hash(password, 10);
-    console.log('New hash generated for comparison:', newHash);
+  const passwordsToTest = ['Admin@1234', 'Admin1234'];
+  for (const pw of passwordsToTest) {
+    const isMatch = await bcrypt.compare(pw, user.passwordHash);
+    if (isMatch) {
+      console.log(`✅ Password "${pw}" MATCHES the stored hash.`);
+    } else {
+      console.log(`ℹ️  Password "${pw}" does not match.`);
+    }
   }
 }
 

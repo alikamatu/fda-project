@@ -15,8 +15,8 @@ export declare class AdminVerificationsController {
                     product: {
                         manufacturer: {
                             id: string;
-                            companyName: string;
                             registrationNumber: string;
+                            companyName: string;
                         };
                     } & {
                         id: string;
@@ -83,8 +83,8 @@ export declare class AdminVerificationsController {
                 product: {
                     manufacturer: {
                         id: string;
-                        companyName: string;
                         registrationNumber: string;
+                        companyName: string;
                         contactEmail: string;
                         address: string;
                     };

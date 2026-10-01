@@ -42,15 +42,19 @@ export function ProductReviewCard({ product, onApprove, onReject, isProcessing }
           <div className="mb-6">
             <h3 className="text-sm font-medium text-gray-500 mb-2">Product Images</h3>
             <div className="grid grid-cols-3 gap-3">
-              {product.images.map((url, i) => (
-                <a key={i} href={`${process.env.NEXT_PUBLIC_API_URL}${url}`} target="_blank" rel="noopener noreferrer">
-                  <img
-                    src={`${process.env.NEXT_PUBLIC_API_URL}${url}`}
-                    alt={`Product image ${i + 1}`}
-                    className="w-full aspect-square object-cover rounded-lg border border-gray-200 hover:opacity-90 transition-opacity"
-                  />
-                </a>
-              ))}
+              {product.images.map((url, i) => {
+                const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1000';
+                const imageUrl = `${baseUrl.replace(/\/$/, '')}${url}`;
+                return (
+                  <a key={i} href={imageUrl} target="_blank" rel="noopener noreferrer">
+                    <img
+                      src={imageUrl}
+                      alt={`Product image ${i + 1}`}
+                      className="w-full aspect-square object-cover rounded-lg border border-gray-200 hover:opacity-90 transition-opacity"
+                    />
+                  </a>
+                );
+              })}
             </div>
           </div>
         )}

@@ -13,11 +13,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       throw new Error('DATABASE_URL environment variable is not set');
     }
 
+    const isLocalhost = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
+    const sslEnv = process.env.DATABASE_SSL;
+    const enableSsl = sslEnv === 'true' || (sslEnv === undefined && !isLocalhost && !connectionString.includes('sslmode=disable'));
+
     const pool = new Pool({ 
       connectionString,
-      ssl: {
-        rejectUnauthorized: false
-      }
+      ...(enableSsl ? { ssl: { rejectUnauthorized: false } } : {})
     });
 
     super({

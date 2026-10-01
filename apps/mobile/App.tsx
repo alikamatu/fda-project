@@ -17,8 +17,9 @@ import { ResultCard } from './components/ResultCard';
 
 const { width, height } = Dimensions.get('window');
 
-// Replace with your machine's IP for physical device testing
-const API_URL = 'http://192.168.100.223:1000/verify'; 
+// Backend API URL: Read from EXPO_PUBLIC_API_URL in .env, with local network fallback
+const API_BASE_URL = (process.env.EXPO_PUBLIC_API_URL || 'http://192.168.100.223:1000').replace(/\/$/, '');
+const API_URL = `${API_BASE_URL}/verify`; 
 
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();

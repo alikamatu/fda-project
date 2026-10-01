@@ -12,8 +12,8 @@ export declare class UsersController {
             createdAt: Date;
             manufacturer: {
                 id: string;
-                companyName: string;
                 registrationNumber: string;
+                companyName: string;
                 contactEmail: string;
                 contactPhone: string | null;
                 address: string;
@@ -52,24 +52,24 @@ export declare class UsersController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        companyName: string;
         registrationNumber: string;
+        userId: string;
+        companyName: string;
         contactEmail: string;
         contactPhone: string | null;
         address: string;
         isApproved: boolean;
-        userId: string;
     }>;
     rejectManufacturer(id: string, reason: string, req: any): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        companyName: string;
         registrationNumber: string;
+        userId: string;
+        companyName: string;
         contactEmail: string;
         contactPhone: string | null;
         address: string;
         isApproved: boolean;
-        userId: string;
     }>;
 }

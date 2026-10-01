@@ -4,8 +4,10 @@ import { LoginForm } from '@/components/auth/LoginForm';
 export default function LoginPage() {
   return (
     <AuthCard
-      title="Sign In"
+      title="Portal Sign In"
       subtitle="Access the FDA Product Verification System"
+      maxWidth="md"
+      headerBadge="Authorized Access"
     >
       <LoginForm />
     </AuthCard>

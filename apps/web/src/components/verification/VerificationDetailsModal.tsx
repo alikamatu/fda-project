@@ -1,7 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState } from 'react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1000').replace(/\/$/, '');
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { VerificationLog, VerificationStatus } from '@/types/verification';
 import { Badge } from '@/components/ui/Badge';

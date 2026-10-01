@@ -10,11 +10,12 @@ const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
     throw new Error('DATABASE_URL environment variable is not set');
 }
+const isLocalhost = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
+const sslEnv = process.env.DATABASE_SSL;
+const enableSsl = sslEnv === 'true' || (sslEnv === undefined && !isLocalhost && !connectionString.includes('sslmode=disable'));
 const pool = new pg_1.Pool({
     connectionString,
-    ssl: {
-        rejectUnauthorized: false
-    }
+    ...(enableSsl ? { ssl: { rejectUnauthorized: false } } : {})
 });
 const prisma = new client_1.PrismaClient({ adapter: new adapter_pg_1.PrismaPg(pool) });
 async function main() {

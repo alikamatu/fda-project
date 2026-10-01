@@ -8,7 +8,7 @@ interface ProductDetailsHeaderProps {
   product: Product;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1000').replace(/\/$/, '');
 
 export function ProductDetailsHeader({ product }: ProductDetailsHeaderProps) {
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
